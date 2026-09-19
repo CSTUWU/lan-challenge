@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Volume2, VolumeX, ArrowRight, ShieldCheck, Home, Terminal, Menu, X } from 'lucide-react';
+import { Volume2, VolumeX, ArrowRight, ShieldCheck, Home, Trophy, Lock, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 interface HeaderProps {
@@ -17,7 +17,9 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
 
   const navItems = [
     { label: 'COMMAND CENTER', href: '/', icon: Home },
-    { label: 'RULES & MAP POOL', href: '/rules', icon: ShieldCheck },
+    { label: 'RULES & MAPS', href: '/rules', icon: ShieldCheck },
+    { label: 'LEADERBOARD', href: '/leaderboard', icon: Trophy },
+    { label: 'ADMIN PORTAL', href: '/admin', icon: Lock },
   ];
 
   return (
@@ -40,7 +42,7 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center space-x-1 font-mono text-xs">
+        <nav className="hidden lg:flex items-center space-x-1 font-mono text-xs">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -48,7 +50,7 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative flex items-center space-x-2 px-4 py-2 rounded transition-all duration-200 border ${
+                className={`relative flex items-center space-x-2 px-3.5 py-2 rounded transition-all duration-200 border ${
                   isActive
                     ? 'border-[#00ff66]/60 bg-[#00ff66]/15 text-[#00ff66] font-bold shadow-[0_0_12px_rgba(0,255,102,0.2)]'
                     : 'border-transparent text-gray-300 hover:text-white hover:bg-[#1a1f26]/60'
@@ -104,7 +106,7 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-gray-300 hover:text-[#00ff66] border border-[#00ff66]/30 rounded bg-[#0b0e14]"
+            className="lg:hidden p-2 text-gray-300 hover:text-[#00ff66] border border-[#00ff66]/30 rounded bg-[#0b0e14]"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -113,7 +115,7 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-3 pt-3 border-t border-[#00ff66]/20 flex flex-col space-y-2 font-mono text-xs">
+        <div className="lg:hidden mt-3 pt-3 border-t border-[#00ff66]/20 flex flex-col space-y-2 font-mono text-xs">
           {navItems.map((item) => (
             <Link
               key={item.href}
