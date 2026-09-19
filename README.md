@@ -1,4 +1,4 @@
-# 🎮 Call of Duty 4: Campus LAN Challenge 3D
+# 🎮 Call of Duty 4: LAN Challenge 3D
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
