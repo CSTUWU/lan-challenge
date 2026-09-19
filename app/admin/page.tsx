@@ -15,12 +15,14 @@ import {
   Key,
   ShieldCheck,
   Save,
-  RotateCcw,
+  Radio,
+  Crosshair,
+  Zap,
 } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { RegistrationModal } from '@/components/ui/RegistrationModal';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
-import { LeaderboardTeam } from '../leaderboard/page';
+import { LeaderboardTeam, LiveMatchData } from '../leaderboard/page';
 
 interface RegisteredSquad {
   id: string;
@@ -56,14 +58,34 @@ const DEFAULT_SQUADS: RegisteredSquad[] = [
   },
 ];
 
+const DEFAULT_LIVE: LiveMatchData = {
+  isLive: true,
+  stageTitle: 'GRAND FINALS // BEST OF 3',
+  mapName: 'mp_crash',
+  roundInfo: 'ROUND 14 / 24 (HALF-TIME)',
+  team1: {
+    name: 'GHOST REAPERS',
+    score: 8,
+    side: 'ATTACKERS',
+    players: ['Kasun (Sniper)', 'Nimal (Assault)', 'Sunil (Assault)', 'Kamal (SMG)', 'Ruwan (Demo)'],
+  },
+  team2: {
+    name: 'TITAN STRIKERS',
+    score: 6,
+    side: 'DEFENDERS',
+    players: ['Dinesh (Sniper)', 'Pathum (Assault)', 'Amila (Assault)', 'Sahan (SMG)', 'Janith (Demo)'],
+  },
+};
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<'leaderboard' | 'registrations'>('leaderboard');
+  const [activeTab, setActiveTab] = useState<'live' | 'leaderboard' | 'registrations'>('live');
   const [teams, setTeams] = useState<LeaderboardTeam[]>([]);
   const [squads, setSquads] = useState<RegisteredSquad[]>(DEFAULT_SQUADS);
+  const [liveMatch, setLiveMatch] = useState<LiveMatchData>(DEFAULT_LIVE);
 
   // Form states for adding/editing a team in Leaderboard
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -92,7 +114,7 @@ export default function AdminPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
 
-  // Load Leaderboard state from LocalStorage
+  // Load state from LocalStorage
   useEffect(() => {
     const storedLb = localStorage.getItem('cod4_lan_leaderboard');
     if (storedLb) {
@@ -102,12 +124,27 @@ export default function AdminPage() {
         console.error(e);
       }
     }
+
+    const storedLive = localStorage.getItem('cod4_lan_live_match');
+    if (storedLive) {
+      try {
+        setLiveMatch(JSON.parse(storedLive));
+      } catch (e) {
+        console.error(e);
+      }
+    }
   }, []);
 
-  // Save Leaderboard to LocalStorage
+  // Save Leaderboard
   const saveLeaderboard = (updated: LeaderboardTeam[]) => {
     setTeams(updated);
     localStorage.setItem('cod4_lan_leaderboard', JSON.stringify(updated));
+  };
+
+  // Save Live Match State
+  const saveLiveMatch = (updated: LiveMatchData) => {
+    setLiveMatch(updated);
+    localStorage.setItem('cod4_lan_live_match', JSON.stringify(updated));
   };
 
   const handlePinSubmit = (e: React.FormEvent) => {
@@ -125,7 +162,6 @@ export default function AdminPage() {
     if (!formData.name.trim()) return;
 
     if (editingId) {
-      // Update team
       const updated = teams.map((t) =>
         t.id === editingId
           ? {
@@ -145,7 +181,6 @@ export default function AdminPage() {
       saveLeaderboard(updated);
       setEditingId(null);
     } else {
-      // Add new team
       const newTeam: LeaderboardTeam = {
         id: `team-${Date.now()}`,
         rank: teams.length + 1,
@@ -162,7 +197,6 @@ export default function AdminPage() {
       saveLeaderboard([...teams, newTeam]);
     }
 
-    // Reset form
     setFormData({
       name: '',
       group: 'Group A',
@@ -195,18 +229,6 @@ export default function AdminPage() {
   const handleDeleteTeam = (id: string) => {
     const updated = teams.filter((t) => t.id !== id);
     saveLeaderboard(updated);
-  };
-
-  const handleToggleSquadStatus = (squadId: string) => {
-    setSquads(
-      squads.map((s) => {
-        if (s.id === squadId) {
-          const nextStatus = s.status === 'VERIFIED' ? 'PENDING' : 'VERIFIED';
-          return { ...s, status: nextStatus };
-        }
-        return s;
-      })
-    );
   };
 
   return (
@@ -285,8 +307,19 @@ export default function AdminPage() {
               {/* Tab Switcher */}
               <div className="flex items-center space-x-2 mt-4 md:mt-0 font-mono text-xs">
                 <button
+                  onClick={() => setActiveTab('live')}
+                  className={`flex items-center space-x-2 px-3.5 py-2 rounded transition-all border ${
+                    activeTab === 'live'
+                      ? 'border-[#00ff66] bg-[#00ff66]/20 text-[#00ff66] font-bold shadow-[0_0_12px_rgba(0,255,102,0.3)]'
+                      : 'border-[#00ff66]/30 bg-[#1a1f26]/60 text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <Radio className="w-4 h-4 text-red-500 animate-pulse" />
+                  <span>LIVE MATCH CONTROL</span>
+                </button>
+                <button
                   onClick={() => setActiveTab('leaderboard')}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded transition-all border ${
+                  className={`flex items-center space-x-2 px-3.5 py-2 rounded transition-all border ${
                     activeTab === 'leaderboard'
                       ? 'border-[#00ff66] bg-[#00ff66]/20 text-[#00ff66] font-bold shadow-[0_0_12px_rgba(0,255,102,0.3)]'
                       : 'border-[#00ff66]/30 bg-[#1a1f26]/60 text-gray-400 hover:text-white'
@@ -297,7 +330,7 @@ export default function AdminPage() {
                 </button>
                 <button
                   onClick={() => setActiveTab('registrations')}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded transition-all border ${
+                  className={`flex items-center space-x-2 px-3.5 py-2 rounded transition-all border ${
                     activeTab === 'registrations'
                       ? 'border-[#00ff66] bg-[#00ff66]/20 text-[#00ff66] font-bold shadow-[0_0_12px_rgba(0,255,102,0.3)]'
                       : 'border-[#00ff66]/30 bg-[#1a1f26]/60 text-gray-400 hover:text-white'
@@ -309,7 +342,185 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* TAB 1: LEADERBOARD MANAGER */}
+            {/* TAB 1: LIVE ARENA MATCH CONTROLLER */}
+            {activeTab === 'live' && (
+              <div className="hud-border bg-[#0b0e14]/90 p-6 md:p-8 rounded-xl border border-[#00ff66]/40 glow-box-green space-y-6 font-mono text-xs">
+                <div className="flex items-center justify-between border-b border-[#00ff66]/30 pb-4">
+                  <div className="flex items-center space-x-3">
+                    <Radio className="w-5 h-5 text-red-500 animate-pulse" />
+                    <h3 className="text-xl font-display font-bold text-white uppercase">
+                      LIVE MATCH ARENA OVERLAY CONTROLLER
+                    </h3>
+                  </div>
+
+                  <button
+                    onClick={() => saveLiveMatch({ ...liveMatch, isLive: !liveMatch.isLive })}
+                    className={`px-4 py-2 rounded font-bold uppercase tracking-wider border transition-all ${
+                      liveMatch.isLive
+                        ? 'border-red-500 bg-red-500/20 text-red-400 shadow-[0_0_12px_rgba(239,68,68,0.4)]'
+                        : 'border-[#00ff66]/40 bg-gray-800 text-gray-400'
+                    }`}
+                  >
+                    STATUS: {liveMatch.isLive ? 'BROADCASTING LIVE' : 'OFFLINE'}
+                  </button>
+                </div>
+
+                {/* Match Info Controls */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-gray-400 mb-1">STAGE TITLE</label>
+                    <input
+                      type="text"
+                      value={liveMatch.stageTitle}
+                      onChange={(e) => saveLiveMatch({ ...liveMatch, stageTitle: e.target.value })}
+                      className="w-full px-3 py-2 bg-[#151a21] border border-[#00ff66]/30 rounded text-white focus:outline-none focus:border-[#00ff66]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-400 mb-1">MAP NAME</label>
+                    <select
+                      value={liveMatch.mapName}
+                      onChange={(e) => saveLiveMatch({ ...liveMatch, mapName: e.target.value })}
+                      className="w-full px-3 py-2 bg-[#151a21] border border-[#00ff66]/30 rounded text-white focus:outline-none focus:border-[#00ff66]"
+                    >
+                      <option value="mp_crash">mp_crash</option>
+                      <option value="mp_crossfire">mp_crossfire</option>
+                      <option value="mp_backlot">mp_backlot</option>
+                      <option value="mp_strike">mp_strike</option>
+                      <option value="mp_citystreets">mp_citystreets</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-gray-400 mb-1">ROUND INFO</label>
+                    <input
+                      type="text"
+                      value={liveMatch.roundInfo}
+                      onChange={(e) => saveLiveMatch({ ...liveMatch, roundInfo: e.target.value })}
+                      className="w-full px-3 py-2 bg-[#151a21] border border-[#00ff66]/30 rounded text-white focus:outline-none focus:border-[#00ff66]"
+                    />
+                  </div>
+                </div>
+
+                {/* Team 1 vs Team 2 Controls */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-800">
+                  {/* TEAM 1 */}
+                  <div className="p-4 bg-[#151a21] rounded border border-[#00ff66]/30 space-y-4">
+                    <h4 className="text-base font-display font-bold text-[#00ff66] uppercase">
+                      TEAM 1 (LEFT SIDE)
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-gray-400 mb-1">TEAM NAME</label>
+                        <input
+                          type="text"
+                          value={liveMatch.team1.name}
+                          onChange={(e) =>
+                            saveLiveMatch({
+                              ...liveMatch,
+                              team1: { ...liveMatch.team1, name: e.target.value },
+                            })
+                          }
+                          className="w-full px-3 py-2 bg-[#0b0e14] border border-[#00ff66]/30 rounded text-white font-bold focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-400 mb-1">SCORE</label>
+                        <input
+                          type="number"
+                          value={liveMatch.team1.score}
+                          onChange={(e) =>
+                            saveLiveMatch({
+                              ...liveMatch,
+                              team1: { ...liveMatch.team1, score: parseInt(e.target.value) || 0 },
+                            })
+                          }
+                          className="w-full px-3 py-2 bg-[#0b0e14] border border-[#00ff66]/30 rounded text-[#00ff66] text-lg font-black text-center focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-400 mb-1">PLAYERS (5 ROSTER NAMES):</label>
+                      {liveMatch.team1.players.map((player, pIdx) => (
+                        <input
+                          key={pIdx}
+                          type="text"
+                          value={player}
+                          onChange={(e) => {
+                            const newPlayers = [...liveMatch.team1.players];
+                            newPlayers[pIdx] = e.target.value;
+                            saveLiveMatch({
+                              ...liveMatch,
+                              team1: { ...liveMatch.team1, players: newPlayers },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 mb-1.5 bg-[#0b0e14] border border-gray-700 rounded text-gray-200 focus:border-[#00ff66] focus:outline-none"
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* TEAM 2 */}
+                  <div className="p-4 bg-[#151a21] rounded border border-teal-500/30 space-y-4">
+                    <h4 className="text-base font-display font-bold text-teal-400 uppercase">
+                      TEAM 2 (RIGHT SIDE)
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-gray-400 mb-1">TEAM NAME</label>
+                        <input
+                          type="text"
+                          value={liveMatch.team2.name}
+                          onChange={(e) =>
+                            saveLiveMatch({
+                              ...liveMatch,
+                              team2: { ...liveMatch.team2, name: e.target.value },
+                            })
+                          }
+                          className="w-full px-3 py-2 bg-[#0b0e14] border border-teal-500/30 rounded text-white font-bold focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-400 mb-1">SCORE</label>
+                        <input
+                          type="number"
+                          value={liveMatch.team2.score}
+                          onChange={(e) =>
+                            saveLiveMatch({
+                              ...liveMatch,
+                              team2: { ...liveMatch.team2, score: parseInt(e.target.value) || 0 },
+                            })
+                          }
+                          className="w-full px-3 py-2 bg-[#0b0e14] border border-teal-500/30 rounded text-teal-400 text-lg font-black text-center focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-400 mb-1">PLAYERS (5 ROSTER NAMES):</label>
+                      {liveMatch.team2.players.map((player, pIdx) => (
+                        <input
+                          key={pIdx}
+                          type="text"
+                          value={player}
+                          onChange={(e) => {
+                            const newPlayers = [...liveMatch.team2.players];
+                            newPlayers[pIdx] = e.target.value;
+                            saveLiveMatch({
+                              ...liveMatch,
+                              team2: { ...liveMatch.team2, players: newPlayers },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 mb-1.5 bg-[#0b0e14] border border-gray-700 rounded text-gray-200 focus:border-teal-400 focus:outline-none"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: LEADERBOARD MANAGER */}
             {activeTab === 'leaderboard' && (
               <div className="space-y-8">
                 {/* Form to Add / Edit Team */}
@@ -503,7 +714,7 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* TAB 2: SQUAD REGISTRATIONS MANAGER */}
+            {/* TAB 3: SQUAD REGISTRATIONS MANAGER */}
             {activeTab === 'registrations' && (
               <div className="hud-border bg-[#0b0e14]/90 p-6 rounded-xl border border-[#00ff66]/30">
                 <h3 className="text-lg font-display font-bold text-white uppercase mb-4 text-[#00ff66]">
@@ -533,7 +744,15 @@ export default function AdminPage() {
 
                       <div className="mt-4 md:mt-0 flex items-center space-x-3">
                         <button
-                          onClick={() => handleToggleSquadStatus(squad.id)}
+                          onClick={() => {
+                            setSquads(
+                              squads.map((s) =>
+                                s.id === squad.id
+                                  ? { ...s, status: s.status === 'VERIFIED' ? 'PENDING' : 'VERIFIED' }
+                                  : s
+                              )
+                            );
+                          }}
                           className={`px-3 py-1.5 rounded font-bold uppercase tracking-wider border flex items-center space-x-1.5 ${
                             squad.status === 'VERIFIED'
                               ? 'border-[#00ff66] bg-[#00ff66]/20 text-[#00ff66]'
