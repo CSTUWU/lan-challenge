@@ -16,6 +16,24 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
+
+  /* Custom dropdown select styling to match tactical green theme */
+  select {
+    accent-color: #00ff66;
+  }
+
+  select option {
+    background-color: #0b0e14;
+    color: #ffffff;
+  }
+
+  select option:hover,
+  select option:focus,
+  select option:active,
+  select option:checked {
+    background-color: #00ff66 !important;
+    color: #000000 !important;
+  }
 }
 
 /* GPU Hardware Acceleration Helper */
