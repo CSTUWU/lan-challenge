@@ -7,6 +7,7 @@ import { Header } from '@/components/ui/Header';
 import { HeroSection } from '@/components/ui/HeroSection';
 import { MapGallerySection } from '@/components/ui/MapGallerySection';
 import { ProtocolsSection } from '@/components/ui/ProtocolsSection';
+import { ContactSection } from '@/components/ui/ContactSection';
 import { RegistrationModal } from '@/components/ui/RegistrationModal';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 
@@ -62,6 +63,7 @@ export default function HomePage() {
         <HeroSection stancePercentage={stancePercentage} />
         <MapGallerySection />
         <ProtocolsSection onOpenModal={handleOpenModal} />
+        <ContactSection />
       </main>
 
       <RegistrationModal

@@ -68,13 +68,6 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
 
         {/* Action Controls */}
         <div className="flex items-center space-x-3">
-          {/* Tactical Server Indicator */}
-          <div className="hidden xl:flex items-center space-x-2 px-3 py-1.5 rounded bg-[#0b0e14] border border-[#00ff66]/30 text-[10px] font-mono">
-            <span className="w-2 h-2 rounded-full bg-[#00ff66] animate-pulse"></span>
-            <span className="text-gray-400">SERVER:</span>
-            <span className="text-[#00ff66] font-bold">1000FPS PROMOD</span>
-          </div>
-
           {/* Audio Toggle */}
           <button
             onClick={onToggleAudio}

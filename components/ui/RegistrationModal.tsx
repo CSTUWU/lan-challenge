@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { X, CheckCircle2, Plus, Trash2 } from 'lucide-react';
+import { X, CheckCircle2, Plus, Trash2, AlertCircle } from 'lucide-react';
 import { CustomSelect } from './CustomSelect';
 
 interface RegistrationModalProps {
@@ -26,13 +26,14 @@ const FACULTIES = [
 export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const [teamName, setTeamName] = useState('');
   const [captainName, setCaptainName] = useState('');
   const [faculty, setFaculty] = useState('');
   const [captainMobile, setCaptainMobile] = useState('');
 
-  // Roster details (up to 5 players)
+  // Roster details (up to 5 players total: Captain + 4 members)
   const [members, setMembers] = useState<TeamMember[]>([
     { name: '', faculty: '' },
     { name: '', faculty: '' },
@@ -46,6 +47,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
     const updated = [...members];
     updated[index][field] = value;
     setMembers(updated);
+    if (validationError) setValidationError(null);
   };
 
   const addMember = () => {
@@ -56,10 +58,42 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
 
   const removeMember = (index: number) => {
     setMembers(members.filter((_, i) => i !== index));
+    if (validationError) setValidationError(null);
+  };
+
+  const validateForm = (): boolean => {
+    // Check if any general field is empty
+    if (!teamName.trim() || !captainName.trim() || !faculty) {
+      setValidationError('All fields are required.');
+      return false;
+    }
+
+    // Phone validation: strictly require exactly 10 digits
+    const phoneClean = captainMobile.replace(/\D/g, '');
+    if (!captainMobile.trim() || phoneClean.length !== 10) {
+      setValidationError('Enter a valid number');
+      return false;
+    }
+
+    // Validate squad members
+    for (let i = 0; i < members.length; i++) {
+      if (!members[i].name.trim() || !members[i].faculty) {
+        setValidationError('All fields are required.');
+        return false;
+      }
+    }
+
+    setValidationError(null);
+    return true;
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
     onSuccess();
 
@@ -69,7 +103,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
         setIsSuccess(false);
         setIsSubmitting(false);
         onClose();
-      }, 2000);
+      }, 2500);
     }, 500);
   };
 
@@ -78,7 +112,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity duration-300 opacity-100 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md transition-opacity duration-300 opacity-100 overflow-y-auto"
     >
       <div className="hud-border bg-[#0b0e14] text-white w-full max-w-xl p-6 sm:p-8 rounded-lg glow-box-green border border-[#00ff66]/60 relative my-8 max-h-[90vh] overflow-y-auto">
         <button
@@ -97,17 +131,19 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           ARENA REGISTRATION
         </h3>
 
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit} noValidate>
           {/* Team Name */}
           <div>
             <label className="block text-xs font-mono text-emerald-400 uppercase tracking-wider mb-1">
-              Clan / Team Name
+              Clan / Team Name *
             </label>
             <input
-              required
               type="text"
               value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
+              onChange={(e) => {
+                setTeamName(e.target.value);
+                if (validationError) setValidationError(null);
+              }}
               placeholder="e.g. TASK FORCE 141"
               className="w-full bg-black/70 border border-emerald-500/40 rounded px-4 py-2.5 text-white font-tactical focus:outline-none focus:border-[#00ff66] text-sm"
             />
@@ -117,24 +153,29 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-mono text-emerald-400 uppercase tracking-wider mb-1">
-                Team Captain Name
+                Team Captain Name *
               </label>
               <input
-                required
                 type="text"
                 value={captainName}
-                onChange={(e) => setCaptainName(e.target.value)}
+                onChange={(e) => {
+                  setCaptainName(e.target.value);
+                  if (validationError) setValidationError(null);
+                }}
                 placeholder="Full Name"
                 className="w-full bg-black/70 border border-emerald-500/40 rounded px-4 py-2.5 text-white font-tactical focus:outline-none focus:border-[#00ff66] text-sm"
               />
             </div>
             <div>
               <label className="block text-xs font-mono text-emerald-400 uppercase tracking-wider mb-1">
-                Faculty
+                Faculty *
               </label>
               <CustomSelect
                 value={faculty}
-                onChange={setFaculty}
+                onChange={(val) => {
+                  setFaculty(val);
+                  if (validationError) setValidationError(null);
+                }}
                 options={FACULTIES}
                 placeholder="Choose your faculty"
               />
@@ -144,13 +185,18 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           {/* Captain Mobile (WhatsApp) */}
           <div>
             <label className="block text-xs font-mono text-emerald-400 uppercase tracking-wider mb-1">
-              Captain Mobile (WhatsApp)
+              Captain Mobile (WhatsApp) *
             </label>
             <input
-              required
-              type="tel"
+              type="text"
+              inputMode="numeric"
+              maxLength={10}
               value={captainMobile}
-              onChange={(e) => setCaptainMobile(e.target.value)}
+              onChange={(e) => {
+                const onlyNums = e.target.value.replace(/\D/g, '').slice(0, 10);
+                setCaptainMobile(onlyNums);
+                if (validationError) setValidationError(null);
+              }}
               placeholder="07XXXXXXXX"
               className="w-full bg-black/70 border border-emerald-500/40 rounded px-4 py-2.5 text-white font-tactical focus:outline-none focus:border-[#00ff66] text-sm"
             />
@@ -160,7 +206,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           <div className="pt-2 border-t border-emerald-500/20">
             <div className="flex items-center justify-between mb-3">
               <label className="block text-xs font-mono text-[#00ff66] uppercase tracking-wider font-bold">
-                Team Members Roster Details
+                Team Members Roster Details *
               </label>
               {members.length < 4 && (
                 <button
@@ -191,7 +237,6 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input
-                      required
                       type="text"
                       value={member.name}
                       onChange={(e) => handleMemberChange(idx, 'name', e.target.value)}
@@ -209,15 +254,6 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
               ))}
             </div>
           </div>
-
-          {isSuccess && (
-            <div className="text-xs font-mono p-3 bg-green-950/60 border border-green-500 text-green-300 rounded flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" />
-              <span>
-                MISSION ACCEPTED: Your squad credentials have been recorded. Our event coordinator will confirm via WhatsApp.
-              </span>
-            </div>
-          )}
 
           <div className="pt-2 flex justify-end space-x-3 border-t border-emerald-500/20">
             <button
@@ -239,6 +275,55 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
           </div>
         </form>
       </div>
+
+      {/* POPUP MODAL: CENTER SCREEN VALIDATION ERROR MESSAGE */}
+      {validationError && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-sm hud-border bg-[#0d1117] p-6 rounded-xl border-2 border-red-500 shadow-[0_0_35px_rgba(239,68,68,0.4)] text-center font-mono">
+            <button
+              onClick={() => setValidationError(null)}
+              className="absolute top-3 right-3 text-gray-400 hover:text-red-400 p-1 rounded-full border border-red-500/30 bg-[#151a21]"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="w-12 h-12 bg-red-500/20 border border-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
+              <AlertCircle className="w-6 h-6 text-red-500" />
+            </div>
+            <h4 className="text-sm font-display font-bold text-red-400 uppercase tracking-widest mb-2">
+              VALIDATION ERROR
+            </h4>
+            <p className="text-xs text-gray-200 leading-relaxed font-semibold">
+              {validationError}
+            </p>
+            <button
+              onClick={() => setValidationError(null)}
+              className="mt-5 px-6 py-2 bg-red-500 hover:bg-red-400 text-black font-display font-bold text-xs uppercase tracking-wider rounded transition-all shadow-[0_0_12px_rgba(239,68,68,0.4)]"
+            >
+              ACKNOWLEDGE
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* POPUP MODAL: CENTER SCREEN REGISTRATION SUCCESS MESSAGE */}
+      {isSuccess && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-md hud-border bg-[#0d1117] p-8 rounded-xl border-2 border-[#00ff66] shadow-[0_0_40px_rgba(0,255,102,0.4)] glow-box-green text-center font-mono">
+            <div className="w-14 h-14 bg-[#00ff66]/20 border-2 border-[#00ff66] rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+              <CheckCircle2 className="w-8 h-8 text-[#00ff66]" />
+            </div>
+            <h4 className="text-lg font-display font-black text-[#00ff66] uppercase tracking-wider mb-2 glow-text-green">
+              MISSION ACCEPTED
+            </h4>
+            <p className="text-xs text-gray-200 leading-relaxed font-tactical">
+              Your squad credentials have been successfully recorded in the arena database. Our event coordinator will confirm your registration details via WhatsApp.
+            </p>
+            <div className="mt-6 pt-3 border-t border-[#00ff66]/20 text-[10px] text-gray-400 uppercase tracking-widest">
+              PROMOD LAN CHALLENGE // ARENA DISPATCH
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
