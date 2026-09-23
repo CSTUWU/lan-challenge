@@ -2,6 +2,8 @@
 
 import { Phone, MessageSquare, Globe, ExternalLink, Mail, MapPin, ShieldCheck, Zap } from 'lucide-react';
 
+import Link from 'next/link';
+
 export function ContactSection() {
   const whatsappNumber = "+94771111111";
   const whatsappLink = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=Hello!%20I%20have%20an%20inquiry%20regarding%20the%20CoD4%20LAN%20Challenge.`;
@@ -19,7 +21,7 @@ export function ContactSection() {
               <span className="w-2.5 h-2.5 bg-[#00ff66] shadow-[0_0_8px_#00ff66]"></span>
               <span>COMMAND DISPATCH // CONTACT HEADQUARTERS</span>
             </div>
-            <h3 className="text-2xl font-display font-black text-white uppercase tracking-wider">
+            <h3 className="text-2xl font-display font-[#00ff66] font-black text-white uppercase tracking-wider">
               LAN<span className="text-[#00ff66] font-light">:</span>CHALLENGE 2026
             </h3>
             <p className="text-xs text-gray-400 font-tactical leading-relaxed">
@@ -130,9 +132,10 @@ export function ContactSection() {
             © 2026 <strong className="text-gray-300">COMPUTER SCIENCE & TECHNOLOGY DEGREE PROGRAM</strong>. LAN CHALLENGE.
           </div>
           <div className="flex items-center space-x-4">
-            <span className="hover:text-emerald-400 cursor-pointer">PRIVACY PROTOCOL</span>
             <span>•</span>
-            <span className="hover:text-emerald-400 cursor-pointer">TERMS OF DISPATCH</span>
+            <Link href="/rules" className="hover:text-emerald-400 transition-colors cursor-pointer">
+              TERMS OF DISPATCH
+            </Link>
           </div>
         </div>
       </div>
