@@ -88,7 +88,7 @@ export default function LeaderboardPage() {
             OFFICIAL LEADERBOARD & STANDINGS
           </h1>
           <p className="mt-2 text-gray-300 font-tactical text-sm md:text-base max-w-3xl leading-relaxed">
-            Real-time standings, match points, round differentials, and bracket qualifications for Call of Duty 4 Promod LAN Challenge. Click the broadcast button above to view live match details.
+            Real-time standings, match points, round differentials, and bracket qualifications for Call of Duty 4 LAN Challenge. Click the broadcast button above to view live match details.
           </p>
         </div>
 

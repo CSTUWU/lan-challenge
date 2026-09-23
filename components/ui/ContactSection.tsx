@@ -3,8 +3,8 @@
 import { Phone, MessageSquare, Globe, ExternalLink, Mail, MapPin, ShieldCheck, Zap } from 'lucide-react';
 
 export function ContactSection() {
-  const whatsappNumber = "+94771234567";
-  const whatsappLink = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=Hello!%20I%20have%20an%20inquiry%20regarding%20the%20CoD4%20Promod%20LAN%20Challenge.`;
+  const whatsappNumber = "+94771111111";
+  const whatsappLink = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=Hello!%20I%20have%20an%20inquiry%20regarding%20the%20CoD4%20LAN%20Challenge.`;
   const facebookLink = "https://facebook.com/CSTDegreeProgram";
   const discordLink = "https://discord.gg/cod4lan2026";
 
@@ -23,11 +23,11 @@ export function ContactSection() {
               LAN<span className="text-[#00ff66] font-light">:</span>CHALLENGE 2026
             </h3>
             <p className="text-xs text-gray-400 font-tactical leading-relaxed">
-              Official Call of Duty 4 Promod Esports Tournament organized by CST Degree Program Students. Reach out for squad inquiries, referee support, and arena details.
+              Official LAN Challenge Tournament organized by Computer Science & Technology Degree Program Students. Reach out for squad inquiries, referee support, and arena details.
             </p>
             <div className="flex items-center space-x-2 text-xs text-emerald-400">
               <MapPin className="w-4 h-4 text-[#00ff66]" />
-              <span>CST Campus Arena // Main IT Auditorium</span>
+              <span>CST Campus Arena</span>
             </div>
           </div>
 
@@ -65,7 +65,7 @@ export function ContactSection() {
                 </div>
                 <div>
                   <span className="block text-[10px] text-gray-400 uppercase">HELPLINE / HOTLINE</span>
-                  <span className="font-bold text-white">+94 77 123 4567 / +94 71 987 6543</span>
+                  <span className="font-bold text-white">+94 77 123 1111 / +94 71 987 1111</span>
                 </div>
               </div>
             </div>
@@ -127,7 +127,7 @@ export function ContactSection() {
         {/* Footer Bottom Bar */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
           <div>
-            © 2026 <strong className="text-gray-300">CST DEGREE PROGRAM</strong>. CALL OF DUTY 4 PROMOD LAN CHALLENGE.
+            © 2026 <strong className="text-gray-300">COMPUTER SCIENCE & TECHNOLOGY DEGREE PROGRAM</strong>. LAN CHALLENGE.
           </div>
           <div className="flex items-center space-x-4">
             <span className="hover:text-emerald-400 cursor-pointer">PRIVACY PROTOCOL</span>

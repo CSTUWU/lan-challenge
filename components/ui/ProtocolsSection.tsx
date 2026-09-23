@@ -18,7 +18,7 @@ export function ProtocolsSection({ onOpenModal }: ProtocolsSectionProps) {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
             <span className="text-[#00ff66] font-mono tracking-widest text-xs uppercase block mb-1">
-              OPERATION BRIEFING // CST DEGREE PROGRAM
+              OPERATION BRIEFING // Computer Science & Technology Degree Program
             </span>
             <h2 className="text-3xl md:text-5xl font-display font-black text-white tracking-wide">
               TOURNAMENT PROTOCOLS
@@ -44,7 +44,7 @@ export function ProtocolsSection({ onOpenModal }: ProtocolsSectionProps) {
         <RegistrationBanner onOpenModal={onOpenModal} />
 
         <div className="mt-16 pt-8 border-t border-gray-800 text-center text-xs font-mono text-gray-400">
-          CST DEGREE PROGRAM &copy; 2026 // COD4 MODERN WARFARE LAN CHALLENGE // DESIGNED FOR IMMERSIVE LAN BATTLES
+          CST DEGREE PROGRAM &copy; 2026 //  LAN CHALLENGE // DESIGNED FOR IMMERSIVE LAN BATTLES
         </div>
       </div>
     </section>

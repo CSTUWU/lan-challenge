@@ -56,7 +56,7 @@ export default function RulesPage() {
             OFFICIAL TOURNAMENT RULES & REGULATIONS
           </h1>
           <p className="mt-3 text-gray-300 font-tactical text-sm md:text-base max-w-3xl leading-relaxed">
-            Standard operating procedure, game server configurations, weapon bans, binding restrictions, and fair-play regulations for Call of Duty 4 Modern Warfare Promod LAN Challenge.
+            Standard operating procedure, game server configurations, weapon bans, binding restrictions, and fair-play regulations for Call of Duty 4 Modern Warfare LAN Challenge.
           </p>
         </div>
 

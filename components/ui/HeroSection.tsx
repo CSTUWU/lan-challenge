@@ -25,7 +25,7 @@ export function HeroSection({ stancePercentage }: HeroSectionProps) {
       <div className="relative z-10 pointer-events-auto max-w-xl">
         <div className="flex items-center space-x-2 text-[#00ff66] text-xs tracking-widest mb-1 font-mono">
           <span className="inline-block w-2 h-2 bg-[#00ff66]"></span>
-          <span>SYSTEM READY // CST DEGREE PROGRAM // COD4 PROTOCOL</span>
+          <span>SYSTEM READY // CST // COD4 PROTOCOL</span>
         </div>
         <h1 className="font-display text-5xl sm:text-7xl md:text-8xl font-extrabold uppercase tracking-tight text-white glow-text-green leading-none">
           LAN <br />
@@ -34,7 +34,7 @@ export function HeroSection({ stancePercentage }: HeroSectionProps) {
           </span>
         </h1>
         <p className="mt-4 text-gray-300 max-w-md text-sm sm:text-base leading-relaxed font-tactical">
-          Engage in zero-latency 5v5 tactical warfare. Organized by CST Degree Program. Crash, Crossfire, Backlot. Pure skill, zero excuses.
+          Engage in zero-latency 5v5 tactical warfare. Organized by Computer Science & Technology Degree Program.
         </p>
 
         <CountdownTimer />

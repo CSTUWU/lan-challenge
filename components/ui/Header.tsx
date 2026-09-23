@@ -36,7 +36,7 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
               LAN<span className="text-[#00ff66] font-light">:</span>CHALLENGE
             </span>
             <span className="text-[9px] font-mono text-gray-400 tracking-widest uppercase mt-0.5">
-              CST DEGREE PROGRAM // COD4
+              COMPUTER SCIENCE & TECHNOLOGY
             </span>
           </div>
         </Link>
@@ -50,11 +50,10 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative flex items-center space-x-2 px-3.5 py-2 rounded transition-all duration-200 border ${
-                  isActive
-                    ? 'border-[#00ff66]/60 bg-[#00ff66]/15 text-[#00ff66] font-bold shadow-[0_0_12px_rgba(0,255,102,0.2)]'
-                    : 'border-transparent text-gray-300 hover:text-white hover:bg-[#1a1f26]/60'
-                }`}
+                className={`relative flex items-center space-x-2 px-3.5 py-2 rounded transition-all duration-200 border ${isActive
+                  ? 'border-[#00ff66]/60 bg-[#00ff66]/15 text-[#00ff66] font-bold shadow-[0_0_12px_rgba(0,255,102,0.2)]'
+                  : 'border-transparent text-gray-300 hover:text-white hover:bg-[#1a1f26]/60'
+                  }`}
               >
                 <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#00ff66]' : 'text-gray-400'}`} />
                 <span className="tracking-wider uppercase">{item.label}</span>
@@ -71,11 +70,10 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
           {/* Audio Toggle */}
           <button
             onClick={onToggleAudio}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded text-xs tracking-wider font-mono border transition-all ${
-              isAudioEnabled
-                ? 'border-[#00ff66] bg-[#00ff66]/20 text-[#00ff66] shadow-[0_0_10px_rgba(0,255,102,0.3)]'
-                : 'border-[#00ff66]/40 hover:border-[#00ff66] bg-[#1a1f26]/60 hover:bg-[#00ff66]/20 text-gray-300'
-            }`}
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded text-xs tracking-wider font-mono border transition-all ${isAudioEnabled
+              ? 'border-[#00ff66] bg-[#00ff66]/20 text-[#00ff66] shadow-[0_0_10px_rgba(0,255,102,0.3)]'
+              : 'border-[#00ff66]/40 hover:border-[#00ff66] bg-[#1a1f26]/60 hover:bg-[#00ff66]/20 text-gray-300'
+              }`}
           >
             {isAudioEnabled ? (
               <Volume2 className="w-4 h-4 text-[#00ff66] animate-pulse" />
