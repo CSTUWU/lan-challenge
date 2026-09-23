@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Trophy, Users, ArrowLeft, Radio } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
@@ -9,9 +9,8 @@ import { AdminAuthGate } from '@/components/ui/AdminAuthGate';
 import { AdminLiveController } from '@/components/ui/AdminLiveController';
 import { AdminLeaderboardManager } from '@/components/ui/AdminLeaderboardManager';
 import { AdminSquadRegistrations } from '@/components/ui/AdminSquadRegistrations';
-import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 import { LeaderboardTeam, LiveMatchData, RegisteredSquad } from '@/types/tournament';
-import { DEFAULT_SQUADS, DEFAULT_LIVE_MATCH } from '@/lib/constants';
+import { DEFAULT_SQUADS } from '@/lib/constants';
 import { tournamentService } from '@/service/tournamentService';
 
 export default function AdminPage() {
@@ -20,40 +19,9 @@ export default function AdminPage() {
   const [pinError, setPinError] = useState(false);
 
   const [activeTab, setActiveTab] = useState<'live' | 'leaderboard' | 'registrations'>('live');
-  const [teams, setTeams] = useState<LeaderboardTeam[]>([]);
+  const [teams, setTeams] = useState<LeaderboardTeam[]>(() => tournamentService.getLeaderboard());
   const [squads, setSquads] = useState<RegisteredSquad[]>(DEFAULT_SQUADS);
-  const [liveMatch, setLiveMatch] = useState<LiveMatchData>(DEFAULT_LIVE_MATCH);
-
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<{
-    name: string;
-    group: 'Group A' | 'Group B' | 'Playoffs';
-    played: number;
-    wins: number;
-    losses: number;
-    roundsWon: number;
-    roundsLost: number;
-    points: number;
-    status: 'CHAMPIONS' | 'QUALIFIED' | 'CONTENDER' | 'ELIMINATED';
-  }>({
-    name: '',
-    group: 'Group A',
-    played: 0,
-    wins: 0,
-    losses: 0,
-    roundsWon: 0,
-    roundsLost: 0,
-    points: 0,
-    status: 'CONTENDER',
-  });
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
-
-  useEffect(() => {
-    setTeams(tournamentService.getLeaderboard());
-    setLiveMatch(tournamentService.getLiveMatch());
-  }, []);
+  const [liveMatch, setLiveMatch] = useState<LiveMatchData>(() => tournamentService.getLiveMatch());
 
   const saveLeaderboard = (updated: LeaderboardTeam[]) => {
     setTeams(updated);

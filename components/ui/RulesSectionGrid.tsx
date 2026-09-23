@@ -142,9 +142,9 @@ export function RulesSectionGrid() {
               <li>Binding 3 or more keys to a single command.</li>
               <li>Binds that alter map visual model (e.g. no-fog, no-foliage scripts).</li>
               <li>Binds pointing to programs outside the CoD4 directory.</li>
-              <li>Scripts containing <code className="text-red-300">'lookdown'</code> or <code className="text-red-300">'wait'</code>.</li>
-              <li>Combining <code className="text-red-300">'attack'</code>, <code className="text-red-300">'frag'</code>, or <code className="text-red-300">'weapnext'</code> with other commands.</li>
-              <li>Binding <code className="text-red-300">'attack'</code> to Mouse Wheel Up/Down.</li>
+              <li>Scripts containing <code className="text-red-300">&apos;lookdown&apos;</code> or <code className="text-red-300">&apos;wait&apos;</code>.</li>
+              <li>Combining <code className="text-red-300">&apos;attack&apos;</code>, <code className="text-red-300">&apos;frag&apos;</code>, or <code className="text-red-300">&apos;weapnext&apos;</code> with other commands.</li>
+              <li>Binding <code className="text-red-300">&apos;attack&apos;</code> to Mouse Wheel Up/Down.</li>
             </ul>
           </div>
           <div>

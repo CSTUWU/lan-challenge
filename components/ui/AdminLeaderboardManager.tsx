@@ -58,7 +58,7 @@ export function AdminLeaderboardManager({
             <label className="block text-gray-400 mb-1">GROUP</label>
             <select
               value={formData.group}
-              onChange={(e) => setFormData({ ...formData, group: e.target.value as any })}
+              onChange={(e) => setFormData({ ...formData, group: e.target.value as 'Group A' | 'Group B' | 'Playoffs' })}
               className="w-full px-3 py-2 bg-[#151a21] border border-[#00ff66]/30 rounded text-white focus:outline-none focus:border-[#00ff66]"
             >
               <option value="Group A">Group A</option>
@@ -70,7 +70,7 @@ export function AdminLeaderboardManager({
             <label className="block text-gray-400 mb-1">STATUS BADGE</label>
             <select
               value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value as 'CHAMPIONS' | 'QUALIFIED' | 'CONTENDER' | 'ELIMINATED' })}
               className="w-full px-3 py-2 bg-[#151a21] border border-[#00ff66]/30 rounded text-white focus:outline-none focus:border-[#00ff66]"
             >
               <option value="CHAMPIONS">CHAMPIONS</option>

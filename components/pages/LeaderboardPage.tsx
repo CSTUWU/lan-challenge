@@ -10,21 +10,17 @@ import { LeaderboardPodium } from '@/components/ui/LeaderboardPodium';
 import { LeaderboardTable } from '@/components/ui/LeaderboardTable';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 import { LeaderboardTeam, LiveMatchData } from '@/types/tournament';
-import { DEFAULT_LEADERBOARD, DEFAULT_LIVE_MATCH } from '@/lib/constants';
 import { tournamentService } from '@/service/tournamentService';
 
 export default function LeaderboardPage() {
-  const [teams, setTeams] = useState<LeaderboardTeam[]>(DEFAULT_LEADERBOARD);
-  const [liveMatch, setLiveMatch] = useState<LiveMatchData>(DEFAULT_LIVE_MATCH);
+  const [teams] = useState<LeaderboardTeam[]>(() => tournamentService.getLeaderboard());
+  const [liveMatch, setLiveMatch] = useState<LiveMatchData>(() => tournamentService.getLiveMatch());
   const [selectedGroup, setSelectedGroup] = useState<string>('ALL');
   const [isLiveModalOpen, setIsLiveModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
 
   useEffect(() => {
-    setTeams(tournamentService.getLeaderboard());
-    setLiveMatch(tournamentService.getLiveMatch());
-
     const interval = setInterval(() => {
       setLiveMatch(tournamentService.getLiveMatch());
     }, 2000);
