@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Maximize2, Zap, Monitor } from 'lucide-react';
+import { ArrowLeft, Maximize2, Monitor } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { RegistrationModal } from '@/components/ui/RegistrationModal';
 import { LiveMatchModal } from '@/components/ui/LiveMatchModal';
@@ -136,16 +136,7 @@ export default function LeaderboardPage() {
           onSelectGroup={setSelectedGroup}
         />
 
-        {/* Link to Admin Panel */}
-        <div className="mt-8 text-center">
-          <Link
-            href="/admin"
-            className="inline-flex items-center space-x-2 text-xs font-mono text-gray-400 hover:text-[#00ff66] transition-colors"
-          >
-            <Zap className="w-3.5 h-3.5 text-[#00ff66]" />
-            <span>MATCH REFEREE LOGIN // ACCESS ADMIN PORTAL</span>
-          </Link>
-        </div>
+
       </main>
 
       {/* Reusable POPUP MODAL */}
