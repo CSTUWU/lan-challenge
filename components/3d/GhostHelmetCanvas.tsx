@@ -209,21 +209,26 @@ export function GhostHelmetCanvas({
 
         const curveP = Math.sin(p * Math.PI * 0.5);
 
+        const width = window.innerWidth;
+        const isMobile = width < 640;
+        const isTablet = width >= 640 && width < 1024;
+
         const startX = 0.0;
-        const endX = 2.55;
+        const endX = isMobile ? 0.35 : isTablet ? 0.8 : 2.55;
+
         const targetX = THREE.MathUtils.lerp(startX, endX, curveP);
         helmetGroup.position.x += (targetX + mouseX * 0.15 - helmetGroup.position.x) * 0.08;
 
         const startY = -1.1;
-        const endY = 0.8;
+        const endY = isMobile ? 1.0 : isTablet ? 0.8 : 0.8;
         helmetGroup.position.y = THREE.MathUtils.lerp(startY, endY, curveP) + breath;
 
         const startZoom = 3.6;
-        const endZoom = 0.8;
+        const endZoom = isMobile ? 0.8 : 0.8;
         helmetGroup.position.z = THREE.MathUtils.lerp(startZoom, endZoom, curveP);
 
         const startScale = 1.0;
-        const endScale = 0.40;
+        const endScale = isMobile ? 0.32 : isTablet ? 0.38 : 0.40;
         const currentScale = THREE.MathUtils.lerp(startScale, endScale, curveP);
         helmetGroup.scale.set(currentScale, currentScale, currentScale);
 
