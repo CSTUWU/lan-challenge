@@ -235,7 +235,10 @@ export default function AdminPage() {
             {activeTab === 'live' && (
               <AdminLiveController
                 liveMatch={liveMatch}
+                teams={teams}
+                squads={squads}
                 onSaveLiveMatch={saveLiveMatch}
+                onUpdateLeaderboard={saveLeaderboard}
               />
             )}
 

@@ -202,9 +202,8 @@ export function GhostHelmetCanvas({
         const breathRot = Math.cos(elapsedTime * 0.5) * 0.015;
 
         // Upright Y-axis spin: Align model front face straight forward + 360 turn
-        const initialYOffset = 0;
         helmetPivot.rotation.x = 0;
-        helmetPivot.rotation.y = initialYOffset + p * Math.PI * 2 + breathRot;
+        helmetPivot.rotation.y = p * Math.PI * 2 + breathRot;
         helmetPivot.rotation.z = 0;
 
         const curveP = Math.sin(p * Math.PI * 0.5);
