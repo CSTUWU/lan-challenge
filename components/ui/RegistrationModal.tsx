@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { X, CheckCircle2, Plus, Trash2, AlertCircle } from 'lucide-react';
+import { X, Plus, Trash2 } from 'lucide-react';
 import { CustomSelect } from './CustomSelect';
+import { StatusAlertModal } from './modals/StatusAlertModal';
 
 interface RegistrationModalProps {
   isOpen: boolean;
@@ -278,51 +279,23 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
 
       {/* POPUP MODAL: CENTER SCREEN VALIDATION ERROR MESSAGE */}
       {validationError && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-sm hud-border bg-[#0d1117] p-6 rounded-xl border-2 border-red-500 shadow-[0_0_35px_rgba(239,68,68,0.4)] text-center font-mono">
-            <button
-              onClick={() => setValidationError(null)}
-              className="absolute top-3 right-3 text-gray-400 hover:text-red-400 p-1 rounded-full border border-red-500/30 bg-[#151a21]"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="w-12 h-12 bg-red-500/20 border border-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
-              <AlertCircle className="w-6 h-6 text-red-500" />
-            </div>
-            <h4 className="text-sm font-display font-bold text-red-400 uppercase tracking-widest mb-2">
-              VALIDATION ERROR
-            </h4>
-            <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-              {validationError}
-            </p>
-            <button
-              onClick={() => setValidationError(null)}
-              className="mt-5 px-6 py-2 bg-red-500 hover:bg-red-400 text-black font-display font-bold text-xs uppercase tracking-wider rounded transition-all shadow-[0_0_12px_rgba(239,68,68,0.4)]"
-            >
-              ACKNOWLEDGE
-            </button>
-          </div>
-        </div>
+        <StatusAlertModal
+          type="error"
+          title="VALIDATION ERROR"
+          message={validationError}
+          onClose={() => setValidationError(null)}
+        />
       )}
 
       {/* POPUP MODAL: CENTER SCREEN REGISTRATION SUCCESS MESSAGE */}
       {isSuccess && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-md hud-border bg-[#0d1117] p-8 rounded-xl border-2 border-[#00ff66] shadow-[0_0_40px_rgba(0,255,102,0.4)] glow-box-green text-center font-mono">
-            <div className="w-14 h-14 bg-[#00ff66]/20 border-2 border-[#00ff66] rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-              <CheckCircle2 className="w-8 h-8 text-[#00ff66]" />
-            </div>
-            <h4 className="text-lg font-display font-black text-[#00ff66] uppercase tracking-wider mb-2 glow-text-green">
-              MISSION ACCEPTED
-            </h4>
-            <p className="text-xs text-gray-200 leading-relaxed font-tactical">
-              Your squad credentials have been successfully recorded in the arena database. Our event coordinator will confirm your registration details via WhatsApp.
-            </p>
-            <div className="mt-6 pt-3 border-t border-[#00ff66]/20 text-[10px] text-gray-400 uppercase tracking-widest">
-              PROMOD LAN CHALLENGE // ARENA DISPATCH
-            </div>
-          </div>
-        </div>
+        <StatusAlertModal
+          type="success"
+          title="MISSION ACCEPTED"
+          message="Your squad credentials have been successfully recorded in the arena database. Our event coordinator will confirm your registration details via WhatsApp."
+          footerTagline="PROMOD LAN CHALLENGE // ARENA DISPATCH"
+          onClose={() => setIsSuccess(false)}
+        />
       )}
     </div>
   );

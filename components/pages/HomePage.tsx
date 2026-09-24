@@ -1,7 +1,12 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { GhostHelmetCanvas } from '@/components/3d/GhostHelmetCanvas';
+import dynamic from 'next/dynamic';
+
+const GhostHelmetCanvas = dynamic(
+  () => import('@/components/3d/GhostHelmetCanvas').then((mod) => mod.GhostHelmetCanvas),
+  { ssr: false }
+);
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Header } from '@/components/ui/Header';
 import { HeroSection } from '@/components/ui/HeroSection';

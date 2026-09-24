@@ -188,10 +188,24 @@ export function GhostHelmetCanvas({
     };
     window.addEventListener('resize', handleResize, { passive: true });
 
+    // Intersection Observer to pause rendering when canvas is scrolled off screen
+    let isCanvasVisible = true;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isCanvasVisible = entry.isIntersecting;
+      },
+      { threshold: 0.05 }
+    );
+    if (mountRef.current) {
+      observer.observe(mountRef.current);
+    }
+
     // Smooth Animation Loop
     const clock = new THREE.Clock();
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
+      if (!isCanvasVisible || document.hidden) return;
+
       const elapsedTime = clock.getElapsedTime();
 
       currentScrollProgress += (targetScrollProgress - currentScrollProgress) * 0.05;
@@ -260,6 +274,7 @@ export function GhostHelmetCanvas({
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);

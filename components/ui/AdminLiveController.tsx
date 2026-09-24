@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Radio, Trophy, CheckCircle, Shield, MapPin, Award } from 'lucide-react';
+import { Radio } from 'lucide-react';
 import { LeaderboardTeam, LiveMatchData, RegisteredSquad } from '@/types/tournament';
-import { CustomSelect, SelectOption } from './CustomSelect';
+import { SelectOption } from './CustomSelect';
+import { MatchConfigPanel } from './admin/MatchConfigPanel';
+import { TeamRosterCard } from './admin/TeamRosterCard';
+import { WinnerDeclarationPanel } from './admin/WinnerDeclarationPanel';
 
 interface AdminLiveControllerProps {
   liveMatch: LiveMatchData;
@@ -38,14 +41,6 @@ export function AdminLiveController({
     value: t.name,
     group: t.group === 'Group A' ? 'GROUP A TEAMS' : t.group === 'Group B' ? 'GROUP B TEAMS' : 'PLAYOFF TEAMS',
   }));
-
-  const mapOptions: SelectOption[] = [
-    { label: 'mp_crash (Crash)', value: 'mp_crash' },
-    { label: 'mp_crossfire (Crossfire)', value: 'mp_crossfire' },
-    { label: 'mp_backlot (Backlot)', value: 'mp_backlot' },
-    { label: 'mp_strike (Strike)', value: 'mp_strike' },
-    { label: 'mp_citystreets (District)', value: 'mp_citystreets' },
-  ];
 
   const getTeamRoster = (teamName: string): string[] => {
     const squadMatch = squads.find((s) => s.teamName.toUpperCase() === teamName.toUpperCase());
@@ -82,6 +77,24 @@ export function AdminLiveController({
         name: teamName,
         players,
       },
+    });
+  };
+
+  const handleUpdateTeam1Player = (index: number, name: string) => {
+    const newPlayers = [...liveMatch.team1.players];
+    newPlayers[index] = name;
+    onSaveLiveMatch({
+      ...liveMatch,
+      team1: { ...liveMatch.team1, players: newPlayers },
+    });
+  };
+
+  const handleUpdateTeam2Player = (index: number, name: string) => {
+    const newPlayers = [...liveMatch.team2.players];
+    newPlayers[index] = name;
+    onSaveLiveMatch({
+      ...liveMatch,
+      team2: { ...liveMatch.team2, players: newPlayers },
     });
   };
 
@@ -168,254 +181,60 @@ export function AdminLiveController({
         </button>
       </div>
 
-      {/* Match Configuration Inputs */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#151a21]/80 p-4 rounded-lg border border-[#00ff66]/20">
-        <div>
-          <label className="block text-emerald-400 font-bold mb-1 uppercase">STAGE TITLE / ROUND</label>
-          <input
-            type="text"
-            value={liveMatch.stageTitle}
-            onChange={(e) => onSaveLiveMatch({ ...liveMatch, stageTitle: e.target.value })}
-            className="w-full px-3 py-2 bg-[#0b0e14] border border-[#00ff66]/30 rounded text-white focus:outline-none focus:border-[#00ff66]"
-            placeholder="e.g. GROUP STAGE // MATCH 04"
-          />
-        </div>
-        <div>
-          <label className="block text-emerald-400 font-bold mb-1 uppercase flex items-center space-x-1">
-            <MapPin className="w-3.5 h-3.5 text-[#00ff66]" />
-            <span>SELECT MAP</span>
-          </label>
-          <CustomSelect
-            value={liveMatch.mapName}
-            onChange={(val) => onSaveLiveMatch({ ...liveMatch, mapName: val })}
-            options={mapOptions}
-            placeholder="Select Map"
-          />
-        </div>
-        <div>
-          <label className="block text-emerald-400 font-bold mb-1 uppercase">ROUND / SCORE INFO</label>
-          <input
-            type="text"
-            value={liveMatch.roundInfo}
-            onChange={(e) => onSaveLiveMatch({ ...liveMatch, roundInfo: e.target.value })}
-            className="w-full px-3 py-2 bg-[#0b0e14] border border-[#00ff66]/30 rounded text-white focus:outline-none focus:border-[#00ff66]"
-            placeholder="e.g. ROUND 12 / 24"
-          />
-        </div>
-      </div>
+      {/* Modularized Match Configuration Panel */}
+      <MatchConfigPanel
+        liveMatch={liveMatch}
+        onSaveLiveMatch={onSaveLiveMatch}
+      />
 
       {/* TEAM 1 & TEAM 2 SELECTION PANELS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-        {/* TEAM 1 PANEL */}
-        <div className="p-5 bg-[#151a21] rounded-xl border border-[#00ff66]/40 space-y-4 shadow-lg">
-          <div className="flex items-center justify-between border-b border-[#00ff66]/20 pb-2">
-            <h4 className="text-base font-display font-bold text-[#00ff66] uppercase flex items-center space-x-2">
-              <Shield className="w-4 h-4 text-[#00ff66]" />
-              <span>TEAM 1 (ATTACKERS / LEFT)</span>
-            </h4>
-            <span className="text-[10px] text-emerald-400 bg-[#00ff66]/10 px-2 py-0.5 rounded border border-[#00ff66]/30 font-bold">
-              ROSTER SYNCED
-            </span>
-          </div>
+        <TeamRosterCard
+          title="TEAM 1 (ATTACKERS / LEFT)"
+          teamName={liveMatch.team1.name}
+          score={liveMatch.team1.score}
+          players={liveMatch.team1.players}
+          teamOptions={teamOptions}
+          themeColor="green"
+          onSelectTeam={handleSelectTeam1}
+          onUpdateScore={(newScore) =>
+            onSaveLiveMatch({
+              ...liveMatch,
+              team1: { ...liveMatch.team1, score: newScore },
+            })
+          }
+          onUpdatePlayer={handleUpdateTeam1Player}
+        />
 
-          <div>
-            <label className="block text-gray-300 font-bold mb-1">SELECT REGISTERED TEAM (GROUP A / B):</label>
-            <CustomSelect
-              value={liveMatch.team1.name}
-              onChange={(val) => handleSelectTeam1(val)}
-              options={teamOptions}
-              placeholder="Select Team 1"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-400 mb-1">LIVE MATCH SCORE:</label>
-            <input
-              type="number"
-              min="0"
-              value={liveMatch.team1.score}
-              onChange={(e) =>
-                onSaveLiveMatch({
-                  ...liveMatch,
-                  team1: { ...liveMatch.team1, score: parseInt(e.target.value) || 0 },
-                })
-              }
-              className="w-full px-3 py-2 bg-[#0b0e14] border border-[#00ff66]/40 rounded text-[#00ff66] text-xl font-black text-center focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-400 mb-2 font-bold flex items-center space-x-1">
-              <span>PLAYERS (5 ROSTER MEMBERS FROM DATABASE):</span>
-            </label>
-            <div className="space-y-1.5">
-              {liveMatch.team1.players.map((player, pIdx) => (
-                <div key={pIdx} className="flex items-center space-x-2">
-                  <span className="w-5 text-gray-500 text-center font-bold">{pIdx + 1}.</span>
-                  <input
-                    type="text"
-                    value={player}
-                    onChange={(e) => {
-                      const newPlayers = [...liveMatch.team1.players];
-                      newPlayers[pIdx] = e.target.value;
-                      onSaveLiveMatch({
-                        ...liveMatch,
-                        team1: { ...liveMatch.team1, players: newPlayers },
-                      });
-                    }}
-                    className="w-full px-3 py-1.5 bg-[#0b0e14] border border-gray-700 rounded text-gray-200 focus:border-[#00ff66] focus:outline-none"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* TEAM 2 PANEL */}
-        <div className="p-5 bg-[#151a21] rounded-xl border border-teal-500/40 space-y-4 shadow-lg">
-          <div className="flex items-center justify-between border-b border-teal-500/20 pb-2">
-            <h4 className="text-base font-display font-bold text-teal-400 uppercase flex items-center space-x-2">
-              <Shield className="w-4 h-4 text-teal-400" />
-              <span>TEAM 2 (DEFENDERS / RIGHT)</span>
-            </h4>
-            <span className="text-[10px] text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/30 font-bold">
-              ROSTER SYNCED
-            </span>
-          </div>
-
-          <div>
-            <label className="block text-gray-300 font-bold mb-1">SELECT REGISTERED TEAM (GROUP A / B):</label>
-            <CustomSelect
-              value={liveMatch.team2.name}
-              onChange={(val) => handleSelectTeam2(val)}
-              options={teamOptions}
-              placeholder="Select Team 2"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-400 mb-1">LIVE MATCH SCORE:</label>
-            <input
-              type="number"
-              min="0"
-              value={liveMatch.team2.score}
-              onChange={(e) =>
-                onSaveLiveMatch({
-                  ...liveMatch,
-                  team2: { ...liveMatch.team2, score: parseInt(e.target.value) || 0 },
-                })
-              }
-              className="w-full px-3 py-2 bg-[#0b0e14] border border-teal-500/40 rounded text-teal-400 text-xl font-black text-center focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-400 mb-2 font-bold flex items-center space-x-1">
-              <span>PLAYERS (5 ROSTER MEMBERS FROM DATABASE):</span>
-            </label>
-            <div className="space-y-1.5">
-              {liveMatch.team2.players.map((player, pIdx) => (
-                <div key={pIdx} className="flex items-center space-x-2">
-                  <span className="w-5 text-gray-500 text-center font-bold">{pIdx + 1}.</span>
-                  <input
-                    type="text"
-                    value={player}
-                    onChange={(e) => {
-                      const newPlayers = [...liveMatch.team2.players];
-                      newPlayers[pIdx] = e.target.value;
-                      onSaveLiveMatch({
-                        ...liveMatch,
-                        team2: { ...liveMatch.team2, players: newPlayers },
-                      });
-                    }}
-                    className="w-full px-3 py-1.5 bg-[#0b0e14] border border-gray-700 rounded text-gray-200 focus:border-teal-400 focus:outline-none"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <TeamRosterCard
+          title="TEAM 2 (DEFENDERS / RIGHT)"
+          teamName={liveMatch.team2.name}
+          score={liveMatch.team2.score}
+          players={liveMatch.team2.players}
+          teamOptions={teamOptions}
+          themeColor="teal"
+          onSelectTeam={handleSelectTeam2}
+          onUpdateScore={(newScore) =>
+            onSaveLiveMatch({
+              ...liveMatch,
+              team2: { ...liveMatch.team2, score: newScore },
+            })
+          }
+          onUpdatePlayer={handleUpdateTeam2Player}
+        />
       </div>
 
-      {/* DECLARE WINNER & AUTO-UPDATE LEADERBOARD CONTROL BOX */}
-      <div className="hud-border bg-[#11161d] p-6 rounded-xl border-2 border-emerald-500/50 space-y-4">
-        <div className="flex items-center space-x-2 text-[#00ff66]">
-          <Award className="w-5 h-5 text-[#00ff66]" />
-          <h4 className="text-base font-display font-bold uppercase tracking-wide">
-            MATCH COMPLETION & LEADERBOARD AUTO-UPDATE
-          </h4>
-        </div>
-
-        <p className="text-gray-300 text-xs font-tactical">
-          Select the winning team below and click &quot;SUBMIT RESULT&quot;. The leaderboard will automatically compute points, wins, losses, and round differentials.
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <label
-            onClick={() => setSelectedWinner('team1')}
-            className={`flex items-center space-x-3 p-3.5 rounded-lg border-2 cursor-pointer transition-all ${
-              selectedWinner === 'team1'
-                ? 'border-[#00ff66] bg-[#00ff66]/15 text-[#00ff66] shadow-[0_0_15px_rgba(0,255,102,0.3)]'
-                : 'border-gray-800 bg-[#0b0e14] text-gray-400 hover:border-gray-600'
-            }`}
-          >
-            <input
-              type="radio"
-              name="winner"
-              checked={selectedWinner === 'team1'}
-              onChange={() => setSelectedWinner('team1')}
-              className="accent-[#00ff66]"
-            />
-            <div>
-              <div className="font-bold text-sm text-white uppercase">{liveMatch.team1.name}</div>
-              <div className="text-[11px] text-emerald-400">Score: {liveMatch.team1.score} Rounds</div>
-            </div>
-          </label>
-
-          <label
-            onClick={() => setSelectedWinner('team2')}
-            className={`flex items-center space-x-3 p-3.5 rounded-lg border-2 cursor-pointer transition-all ${
-              selectedWinner === 'team2'
-                ? 'border-teal-400 bg-teal-500/15 text-teal-400 shadow-[0_0_15px_rgba(20,184,166,0.3)]'
-                : 'border-gray-800 bg-[#0b0e14] text-gray-400 hover:border-gray-600'
-            }`}
-          >
-            <input
-              type="radio"
-              name="winner"
-              checked={selectedWinner === 'team2'}
-              onChange={() => setSelectedWinner('team2')}
-              className="accent-teal-400"
-            />
-            <div>
-              <div className="font-bold text-sm text-white uppercase">{liveMatch.team2.name}</div>
-              <div className="text-[11px] text-teal-300">Score: {liveMatch.team2.score} Rounds</div>
-            </div>
-          </label>
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-          <button
-            disabled={!selectedWinner}
-            onClick={handleDeclareWinner}
-            className={`w-full sm:w-auto px-8 py-3 rounded-lg font-mono text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center space-x-2 ${
-              selectedWinner
-                ? 'bg-[#00ff66] text-black hover:bg-emerald-400 shadow-[0_0_20px_rgba(0,255,102,0.4)] cursor-pointer'
-                : 'bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed'
-            }`}
-          >
-            <Trophy className="w-4 h-4" />
-            <span>DECLARE WINNER & AUTO-UPDATE LEADERBOARD</span>
-          </button>
-
-          {matchSubmitted && (
-            <div className="flex items-center space-x-2 text-[#00ff66] font-bold text-xs animate-bounce">
-              <CheckCircle className="w-4 h-4" />
-              <span>LEADERBOARD AUTOMATICALLY UPDATED!</span>
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Modularized Winner Declaration Panel */}
+      <WinnerDeclarationPanel
+        team1Name={liveMatch.team1.name}
+        team1Score={liveMatch.team1.score}
+        team2Name={liveMatch.team2.name}
+        team2Score={liveMatch.team2.score}
+        selectedWinner={selectedWinner}
+        matchSubmitted={matchSubmitted}
+        onSelectWinner={setSelectedWinner}
+        onDeclareWinner={handleDeclareWinner}
+      />
     </div>
   );
 }
