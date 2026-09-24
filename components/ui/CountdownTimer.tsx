@@ -6,7 +6,7 @@ export function CountdownTimer() {
   const { days, hours, mins, secs } = useCountdown(4, 18);
 
   return (
-    <div className="hud-border bg-black/70 p-4 mt-6 max-w-md backdrop-blur-sm rounded">
+    <div className="hud-border bg-black/70 p-4 mt-95 sm:mt-6 max-w-md backdrop-blur-sm rounded">
       <div className="text-xs text-emerald-400 tracking-wider font-mono mb-2 uppercase flex justify-between">
         <span>TOURNAMENT COMMENCES IN:</span>
         <span className="text-white font-bold animate-pulse">● LIVE LAN SERVER</span>
