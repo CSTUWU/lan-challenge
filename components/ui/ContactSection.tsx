@@ -29,7 +29,7 @@ export function ContactSection() {
             </p>
             <div className="flex items-center space-x-2 text-xs text-emerald-400">
               <MapPin className="w-4 h-4 text-[#00ff66]" />
-              <span>CST Campus Arena</span>
+              <span>Uwa Wellassa University</span>
             </div>
           </div>
 

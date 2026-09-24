@@ -50,7 +50,7 @@ export default function RulesPage() {
 
           <div className="flex items-center space-x-2 text-[#00ff66] font-mono text-xs tracking-widest uppercase mb-2">
             <span className="w-2.5 h-2.5 bg-[#00ff66] shadow-[0_0_8px_#00ff66]"></span>
-            <span>CST DEGREE PROGRAM // OFFICIAL TOURNAMENT DIRECTIVE</span>
+            <span>OFFICIAL TOURNAMENT DIRECTIVE</span>
           </div>
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-display font-black text-white glow-text-green uppercase tracking-wide">
             OFFICIAL TOURNAMENT RULES & REGULATIONS

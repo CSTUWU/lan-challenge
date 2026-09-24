@@ -88,10 +88,6 @@ export function LiveMatchModal({ isOpen, onClose, liveMatch }: LiveMatchModalPro
                 {liveMatch.team2.score}
               </span>
             </div>
-
-            <div className="mt-3 text-xs font-mono text-gray-400 uppercase tracking-widest font-bold">
-              PROMOD S&D // MR12
-            </div>
           </div>
 
           <div className="lg:col-span-4 bg-[#0d1117] p-6 rounded-xl border-2 border-teal-500/40 shadow-inner">
@@ -124,7 +120,7 @@ export function LiveMatchModal({ isOpen, onClose, liveMatch }: LiveMatchModalPro
         </div>
 
         <div className="mt-8 pt-4 border-t border-gray-800 text-center font-mono text-xs text-gray-400 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>CST DEGREE PROGRAM // COD4 LAN CHALLENGE LIVE ARENA</span>
+          <span>LAN CHALLENGE LIVE ARENA</span>
           <span className="text-[#00ff66] font-bold">REAL-TIME OVERWATCH SYNC: ACTIVE</span>
         </div>
       </div>

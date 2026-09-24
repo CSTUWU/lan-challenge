@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Maximize2, Zap } from 'lucide-react';
+import { ArrowLeft, Maximize2, Zap, Monitor } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { RegistrationModal } from '@/components/ui/RegistrationModal';
 import { LiveMatchModal } from '@/components/ui/LiveMatchModal';
@@ -18,6 +18,7 @@ export default function LeaderboardPage() {
   const [selectedGroup, setSelectedGroup] = useState<string>('ALL');
   const [isLiveModalOpen, setIsLiveModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
 
   useEffect(() => {
@@ -26,6 +27,24 @@ export default function LeaderboardPage() {
     }, 2000);
 
     return () => clearInterval(interval);
+  }, []);
+
+  const toggleKioskFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
   }, []);
 
   const top3 = [...teams]
@@ -50,7 +69,7 @@ export default function LeaderboardPage() {
       />
 
       <main className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-28 pb-24">
-        {/* Top Navigation & Live Match Modal Trigger Button */}
+        {/* Top Navigation & Kiosk / Live Match Modal Trigger Buttons */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <Link
             href="/"
@@ -60,29 +79,44 @@ export default function LeaderboardPage() {
             <span>RETURN TO COMMAND CENTER</span>
           </Link>
 
-          <button
-            onClick={() => {
-              setIsLiveModalOpen(true);
-              playGunCockSound();
-            }}
-            className="inline-flex items-center justify-center space-x-2.5 px-5 py-2.5 bg-[#0b0e14] border-2 border-red-500 hover:border-[#00ff66] text-white rounded-lg shadow-[0_0_20px_rgba(239,68,68,0.35)] hover:shadow-[0_0_25px_rgba(0,255,102,0.4)] transition-all group font-mono text-xs"
-          >
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-            </span>
-            <span className="font-bold tracking-widest text-red-400 group-hover:text-[#00ff66] uppercase">
-              LAUNCH LIVE MATCH BROADCAST OVERLAY
-            </span>
-            <Maximize2 className="w-4 h-4 text-red-400 group-hover:text-[#00ff66]" />
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => {
+                toggleKioskFullscreen();
+                playGunCockSound();
+              }}
+              className="inline-flex items-center justify-center space-x-2 px-4 py-2.5 bg-[#0b0e14] border border-[#00ff66]/50 hover:bg-[#00ff66]/20 text-[#00ff66] rounded-lg shadow-[0_0_15px_rgba(0,255,102,0.25)] transition-all font-mono text-xs group"
+            >
+              <Monitor className="w-4 h-4 text-[#00ff66] group-hover:scale-110 transition-transform" />
+              <span className="font-bold uppercase tracking-wider">
+                {isFullscreen ? 'EXIT KIOSK MODE' : 'KIOSK FULLSCREEN MODE'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => {
+                setIsLiveModalOpen(true);
+                playGunCockSound();
+              }}
+              className="inline-flex items-center justify-center space-x-2.5 px-5 py-2.5 bg-[#0b0e14] border-2 border-red-500 hover:border-[#00ff66] text-white rounded-lg shadow-[0_0_20px_rgba(239,68,68,0.35)] hover:shadow-[0_0_25px_rgba(0,255,102,0.4)] transition-all group font-mono text-xs"
+            >
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+              </span>
+              <span className="font-bold tracking-widest text-red-400 group-hover:text-[#00ff66] uppercase">
+                LAUNCH LIVE MATCH BROADCAST OVERLAY
+              </span>
+              <Maximize2 className="w-4 h-4 text-red-400 group-hover:text-[#00ff66]" />
+            </button>
+          </div>
         </div>
 
         {/* Page Hero Header */}
         <div className="hud-border bg-[#0b0e14]/90 p-6 md:p-8 rounded-xl border border-[#00ff66]/40 mb-10 glow-box-green relative overflow-hidden">
           <div className="flex items-center space-x-2 text-[#00ff66] font-mono text-xs tracking-widest uppercase mb-2">
             <span className="w-2.5 h-2.5 bg-[#00ff66] shadow-[0_0_8px_#00ff66]"></span>
-            <span>LIVE TOURNAMENT RANKINGS // CST DEGREE PROGRAM</span>
+            <span>LIVE TOURNAMENT RANKINGS</span>
           </div>
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-display font-black text-white glow-text-green uppercase tracking-wide">
             OFFICIAL LEADERBOARD & STANDINGS
