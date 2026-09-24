@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Radio, Trophy, CheckCircle, Shield, MapPin, Award } from 'lucide-react';
 import { LeaderboardTeam, LiveMatchData, RegisteredSquad } from '@/types/tournament';
+import { CustomSelect, SelectOption } from './CustomSelect';
 
 interface AdminLiveControllerProps {
   liveMatch: LiveMatchData;
@@ -31,9 +32,20 @@ export function AdminLiveController({
   const [selectedWinner, setSelectedWinner] = useState<'team1' | 'team2' | null>(null);
   const [matchSubmitted, setMatchSubmitted] = useState(false);
 
-  // Group A and Group B teams from Leaderboard or Squads
-  const groupATeams = teams.filter((t) => t.group === 'Group A');
-  const groupBTeams = teams.filter((t) => t.group === 'Group B');
+  // Group A and Group B team options for CustomSelect
+  const teamOptions: SelectOption[] = teams.map((t) => ({
+    label: `${t.name} (${t.group})`,
+    value: t.name,
+    group: t.group === 'Group A' ? 'GROUP A TEAMS' : t.group === 'Group B' ? 'GROUP B TEAMS' : 'PLAYOFF TEAMS',
+  }));
+
+  const mapOptions: SelectOption[] = [
+    { label: 'mp_crash (Crash)', value: 'mp_crash' },
+    { label: 'mp_crossfire (Crossfire)', value: 'mp_crossfire' },
+    { label: 'mp_backlot (Backlot)', value: 'mp_backlot' },
+    { label: 'mp_strike (Strike)', value: 'mp_strike' },
+    { label: 'mp_citystreets (District)', value: 'mp_citystreets' },
+  ];
 
   const getTeamRoster = (teamName: string): string[] => {
     const squadMatch = squads.find((s) => s.teamName.toUpperCase() === teamName.toUpperCase());
@@ -173,17 +185,12 @@ export function AdminLiveController({
             <MapPin className="w-3.5 h-3.5 text-[#00ff66]" />
             <span>SELECT MAP</span>
           </label>
-          <select
+          <CustomSelect
             value={liveMatch.mapName}
-            onChange={(e) => onSaveLiveMatch({ ...liveMatch, mapName: e.target.value })}
-            className="w-full px-3 py-2 bg-[#0b0e14] border border-[#00ff66]/30 rounded text-white font-bold focus:outline-none focus:border-[#00ff66]"
-          >
-            <option value="mp_crash">mp_crash (Crash)</option>
-            <option value="mp_crossfire">mp_crossfire (Crossfire)</option>
-            <option value="mp_backlot">mp_backlot (Backlot)</option>
-            <option value="mp_strike">mp_strike (Strike)</option>
-            <option value="mp_citystreets">mp_citystreets (District)</option>
-          </select>
+            onChange={(val) => onSaveLiveMatch({ ...liveMatch, mapName: val })}
+            options={mapOptions}
+            placeholder="Select Map"
+          />
         </div>
         <div>
           <label className="block text-emerald-400 font-bold mb-1 uppercase">ROUND / SCORE INFO</label>
@@ -213,26 +220,12 @@ export function AdminLiveController({
 
           <div>
             <label className="block text-gray-300 font-bold mb-1">SELECT REGISTERED TEAM (GROUP A / B):</label>
-            <select
+            <CustomSelect
               value={liveMatch.team1.name}
-              onChange={(e) => handleSelectTeam1(e.target.value)}
-              className="w-full px-3 py-2.5 bg-[#0b0e14] border border-[#00ff66]/40 rounded text-white font-bold focus:outline-none focus:border-[#00ff66]"
-            >
-              <optgroup label="--- GROUP A TEAMS ---">
-                {groupATeams.map((t) => (
-                  <option key={t.id} value={t.name}>
-                    {t.name} (Group A)
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label="--- GROUP B TEAMS ---">
-                {groupBTeams.map((t) => (
-                  <option key={t.id} value={t.name}>
-                    {t.name} (Group B)
-                  </option>
-                ))}
-              </optgroup>
-            </select>
+              onChange={(val) => handleSelectTeam1(val)}
+              options={teamOptions}
+              placeholder="Select Team 1"
+            />
           </div>
 
           <div>
@@ -292,26 +285,12 @@ export function AdminLiveController({
 
           <div>
             <label className="block text-gray-300 font-bold mb-1">SELECT REGISTERED TEAM (GROUP A / B):</label>
-            <select
+            <CustomSelect
               value={liveMatch.team2.name}
-              onChange={(e) => handleSelectTeam2(e.target.value)}
-              className="w-full px-3 py-2.5 bg-[#0b0e14] border border-teal-500/40 rounded text-white font-bold focus:outline-none focus:border-teal-400"
-            >
-              <optgroup label="--- GROUP A TEAMS ---">
-                {groupATeams.map((t) => (
-                  <option key={t.id} value={t.name}>
-                    {t.name} (Group A)
-                  </option>
-                ))}
-              </optgroup>
-              <optgroup label="--- GROUP B TEAMS ---">
-                {groupBTeams.map((t) => (
-                  <option key={t.id} value={t.name}>
-                    {t.name} (Group B)
-                  </option>
-                ))}
-              </optgroup>
-            </select>
+              onChange={(val) => handleSelectTeam2(val)}
+              options={teamOptions}
+              placeholder="Select Team 2"
+            />
           </div>
 
           <div>

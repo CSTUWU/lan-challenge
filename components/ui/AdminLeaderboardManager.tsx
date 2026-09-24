@@ -2,6 +2,7 @@
 
 import { Edit2, Trash2, Save } from 'lucide-react';
 import { LeaderboardTeam } from '@/types/tournament';
+import { CustomSelect } from './CustomSelect';
 
 interface TeamFormData {
   name: string;
@@ -56,28 +57,21 @@ export function AdminLeaderboardManager({
           </div>
           <div>
             <label className="block text-gray-400 mb-1">GROUP</label>
-            <select
+            <CustomSelect
               value={formData.group}
-              onChange={(e) => setFormData({ ...formData, group: e.target.value as 'Group A' | 'Group B' | 'Playoffs' })}
-              className="w-full px-3 py-2 bg-[#151a21] border border-[#00ff66]/30 rounded text-white focus:outline-none focus:border-[#00ff66]"
-            >
-              <option value="Group A">Group A</option>
-              <option value="Group B">Group B</option>
-              <option value="Playoffs">Playoffs</option>
-            </select>
+              onChange={(val) => setFormData({ ...formData, group: val as 'Group A' | 'Group B' | 'Playoffs' })}
+              options={['Group A', 'Group B', 'Playoffs']}
+              placeholder="Select Group"
+            />
           </div>
           <div>
             <label className="block text-gray-400 mb-1">STATUS BADGE</label>
-            <select
+            <CustomSelect
               value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value as 'CHAMPIONS' | 'QUALIFIED' | 'CONTENDER' | 'ELIMINATED' })}
-              className="w-full px-3 py-2 bg-[#151a21] border border-[#00ff66]/30 rounded text-white focus:outline-none focus:border-[#00ff66]"
-            >
-              <option value="CHAMPIONS">CHAMPIONS</option>
-              <option value="QUALIFIED">QUALIFIED</option>
-              <option value="CONTENDER">CONTENDER</option>
-              <option value="ELIMINATED">ELIMINATED</option>
-            </select>
+              onChange={(val) => setFormData({ ...formData, status: val as 'CHAMPIONS' | 'QUALIFIED' | 'CONTENDER' | 'ELIMINATED' })}
+              options={['CHAMPIONS', 'QUALIFIED', 'CONTENDER', 'ELIMINATED']}
+              placeholder="Select Status"
+            />
           </div>
           <div>
             <label className="block text-gray-400 mb-1">TOTAL POINTS</label>
