@@ -13,19 +13,19 @@ Organized for **Uva Wellassa University**.
 
 ## 🔥 Features
 
-- 🎯 **Responsive 3D Ghost Model**: Three.js WebGL rendering with custom tactical lighting, cyan backlight outlines, and neon green contour rim lights. Automatically adapts scale, zoom, and viewport positions for Mobile (portrait top-right corner glide), Tablet, and Desktop screens.
-- ⚡ **IntersectionObserver GPU Optimization**: WebGL animation loop automatically pauses when scrolled off-screen or when the browser tab is hidden, saving GPU/CPU resources on mobile and low-end devices.
-- 🏆 **Interactive Leaderboard & Podium**: Live team rankings, match points, round differentials, top 3 podium highlights, and Group A/Group B filters.
-- 🖥️ **Kiosk Arena Fullscreen Mode**: Dedicated 1-click fullscreen mode designed for physical touch kiosks and tournament arena standees.
-- 🎮 **Live Match Arena Overlay Controller**: Admin control panel featuring:
+-  **Responsive 3D Ghost Model**: Three.js WebGL rendering with custom tactical lighting, cyan backlight outlines, and neon green contour rim lights. Automatically adapts scale, zoom, and viewport positions for Mobile (portrait top-right corner glide), Tablet, and Desktop screens.
+-  **IntersectionObserver GPU Optimization**: WebGL animation loop automatically pauses when scrolled off-screen or when the browser tab is hidden, saving GPU/CPU resources on mobile and low-end devices.
+-  **Interactive Leaderboard & Podium**: Live team rankings, match points, round differentials, top 3 podium highlights, and Group A/Group B filters.
+-  **Kiosk Arena Fullscreen Mode**: Dedicated 1-click fullscreen mode designed for physical touch kiosks and tournament arena standees.
+-  **Live Match Arena Overlay Controller**: Admin control panel featuring:
   - **Group A & Group B Team Dropdowns**: Select registered teams from Group A or Group B.
   - **Auto Roster Sync**: Automatically populates player 5-member rosters from registration data.
   - **Map Selection**: Choose official tournament maps (`mp_crash`, `mp_crossfire`, `mp_backlot`, `mp_strike`, `mp_citystreets`).
   - **Declare Winner & Auto Leaderboard Sync**: Automatically computes win/loss stats, round differentials, and updates leaderboard points and rankings in real-time.
-- 🔊 **Procedural Web Audio API SFX**: Tactical sound generator featuring realistic gun-cocking sound effects and ambient drone oscillator.
-- ⏳ **Live Countdown Timer**: Responsive tournament countdown timer calculating days, hours, minutes, and seconds.
-- 📝 **Squad Enlistment System**: Custom-styled neon faculty/group dropdown selectors, 5-member roster registration, and reusable status alert modals.
-- 💚 **COD Tactical Neon Theme**: Styled with Call of Duty Tactical Neon Green (`#00ff66`) HUD borders, scanline overlays, and glow effects.
+-  **Procedural Web Audio API SFX**: Tactical sound generator featuring realistic gun-cocking sound effects and ambient drone oscillator.
+-  **Live Countdown Timer**: Responsive tournament countdown timer calculating days, hours, minutes, and seconds.
+-  **Squad Enlistment System**: Custom-styled neon faculty/group dropdown selectors, 5-member roster registration, and reusable status alert modals.
+-  **COD Tactical Neon Theme**: Styled with Call of Duty Tactical Neon Green (`#00ff66`) HUD borders, scanline overlays, and glow effects.
 
 ---
 
