@@ -25,10 +25,9 @@ export function AdminAuthGate({ pinInput, setPinInput, pinError, onAuthorize }: 
       <form onSubmit={onAuthorize} className="space-y-4 font-mono text-xs">
         <input
           type="password"
-          placeholder="ENTER ADMIN PIN (e.g. 1337)"
           value={pinInput}
           onChange={(e) => setPinInput(e.target.value)}
-          className="w-full px-4 py-3 bg-[#151a21] border border-[#00ff66]/40 rounded text-center text-white text-base tracking-widest placeholder-gray-500 focus:outline-none focus:border-[#00ff66]"
+          className="w-full px-4 py-3 bg-[#151a21] border border-[#00ff66]/40 rounded text-center text-white text-base tracking-widest focus:outline-none focus:border-[#00ff66]"
         />
 
         {pinError && (
