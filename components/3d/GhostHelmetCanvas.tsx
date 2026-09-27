@@ -19,6 +19,11 @@ export function GhostHelmetCanvas({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const soundPlayedRef = useRef(false);
 
+  const callbacksRef = useRef({ onProgress, onStanceUpdate, onPlayAimSound });
+  useEffect(() => {
+    callbacksRef.current = { onProgress, onStanceUpdate, onPlayAimSound };
+  });
+
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -71,7 +76,8 @@ export function GhostHelmetCanvas({
     scene.add(chestLight);
 
     // Floating Sparks & Embers (Optimized count for 60+ FPS)
-    const NUM_EMBERS = 350;
+    const isMobileDevice = window.innerWidth < 768;
+    const NUM_EMBERS = isMobileDevice ? 150 : 350;
     const emberPositions = new Float32Array(NUM_EMBERS * 3);
     for (let i = 0; i < NUM_EMBERS; i++) {
       emberPositions[i * 3 + 0] = (Math.random() - 0.5) * 8;
@@ -93,12 +99,14 @@ export function GhostHelmetCanvas({
     // GLTF Loading
     let helmetPivot: THREE.Group | null = null;
     let helmetGroup: THREE.Group | null = null;
+    let loadedModel: THREE.Object3D | null = null;
 
     const loader = new GLTFLoader();
     loader.load(
       '/models/classic_ghost.glb',
       (gltf) => {
         const model = gltf.scene;
+        loadedModel = model;
 
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
@@ -136,14 +144,14 @@ export function GhostHelmetCanvas({
         helmetGroup.add(helmetPivot);
 
         scene.add(helmetGroup);
-        onProgress(100, 'TACTICAL 3D GLB READY');
+        callbacksRef.current.onProgress(100, 'TACTICAL 3D GLB READY');
       },
       (xhr) => {
         if (xhr.lengthComputable && xhr.total > 0) {
           const percent = Math.round((xhr.loaded / xhr.total) * 100);
           const loadedMb = (xhr.loaded / (1024 * 1024)).toFixed(1);
           const totalMb = (xhr.total / (1024 * 1024)).toFixed(1);
-          onProgress(percent, `STREAMING GLB DATA: ${loadedMb} MB / ${totalMb} MB`);
+          callbacksRef.current.onProgress(percent, `STREAMING GLB DATA: ${loadedMb} MB / ${totalMb} MB`);
         }
       }
     );
@@ -160,6 +168,7 @@ export function GhostHelmetCanvas({
     // Scroll Logic with Passive Listener
     let targetScrollProgress = 0;
     let currentScrollProgress = 0;
+    let lastPercentage = -1;
 
     const handleScroll = () => {
       const scrollY = window.pageYOffset || document.documentElement.scrollTop;
@@ -170,10 +179,13 @@ export function GhostHelmetCanvas({
 
       targetScrollProgress = progress;
       const percentage = Math.round(targetScrollProgress * 100);
-      onStanceUpdate(percentage);
+      if (percentage !== lastPercentage) {
+        lastPercentage = percentage;
+        callbacksRef.current.onStanceUpdate(percentage);
+      }
 
       if (progress > 0.65 && !soundPlayedRef.current) {
-        onPlayAimSound();
+        callbacksRef.current.onPlayAimSound();
         soundPlayedRef.current = true;
       } else if (progress < 0.3) {
         soundPlayedRef.current = false;
@@ -278,11 +290,26 @@ export function GhostHelmetCanvas({
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
+
+      if (loadedModel) {
+        loadedModel.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            const mesh = child as THREE.Mesh;
+            mesh.geometry?.dispose();
+            if (Array.isArray(mesh.material)) {
+              mesh.material.forEach((mat) => mat.dispose());
+            } else if (mesh.material) {
+              mesh.material.dispose();
+            }
+          }
+        });
+      }
+
       emberGeo.dispose();
       emberMat.dispose();
       renderer.dispose();
     };
-  }, [onProgress, onStanceUpdate, onPlayAimSound]);
+  }, []);
 
   return (
     <div ref={mountRef} id="canvas-container" className="fixed inset-0 w-full h-full pointer-events-none z-0 transform-gpu">

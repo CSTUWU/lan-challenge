@@ -18,11 +18,22 @@ export function useCountdown(initialDays = 4, initialHours = 18) {
   });
 
   useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+
     const updateTimer = () => {
       const now = new Date().getTime();
       const distance = targetDate.getTime() - now;
 
-      if (distance < 0) return;
+      if (distance <= 0) {
+        setTimeLeft({
+          days: '00',
+          hours: '00',
+          mins: '00',
+          secs: '00',
+        });
+        if (interval) clearInterval(interval);
+        return;
+      }
 
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -38,8 +49,10 @@ export function useCountdown(initialDays = 4, initialHours = 18) {
     };
 
     updateTimer();
-    const interval = setInterval(updateTimer, 1000);
-    return () => clearInterval(interval);
+    interval = setInterval(updateTimer, 1000);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [targetDate]);
 
   return timeLeft;

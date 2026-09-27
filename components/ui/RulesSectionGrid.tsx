@@ -1,5 +1,3 @@
-'use client';
-
 import { Users, FileText, Ban, Sliders, ShieldAlert, CheckCircle } from 'lucide-react';
 
 export function RulesSectionGrid() {
