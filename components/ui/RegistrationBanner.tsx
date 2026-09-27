@@ -1,7 +1,7 @@
-'use client';
+import Link from 'next/link';
 
 interface RegistrationBannerProps {
-  onOpenModal: () => void;
+  onOpenModal?: () => void;
 }
 
 export function RegistrationBanner({ onOpenModal }: RegistrationBannerProps) {
@@ -21,12 +21,21 @@ export function RegistrationBanner({ onOpenModal }: RegistrationBannerProps) {
           Registration is open to all university and campus faculties. LAN computers and mechanical gear will be provided on-site.
         </p>
       </div>
-      <button
-        onClick={onOpenModal}
-        className="w-full md:w-auto px-8 py-4 bg-[#00ff66] hover:bg-emerald-400 text-black font-display font-black text-base tracking-widest uppercase rounded shadow-[0_0_20px_rgba(0,255,102,0.6)] transition-all hover:scale-105 active:scale-95"
-      >
-        REGISTER TEAM NOW
-      </button>
+      {onOpenModal ? (
+        <button
+          onClick={onOpenModal}
+          className="w-full md:w-auto px-8 py-4 bg-[#00ff66] hover:bg-emerald-400 text-black font-display font-black text-base tracking-widest uppercase rounded shadow-[0_0_20px_rgba(0,255,102,0.6)] transition-all hover:scale-105 active:scale-95"
+        >
+          REGISTER TEAM NOW
+        </button>
+      ) : (
+        <Link
+          href="/register"
+          className="w-full md:w-auto px-8 py-4 bg-[#00ff66] hover:bg-emerald-400 text-black font-display font-black text-base tracking-widest uppercase rounded shadow-[0_0_20px_rgba(0,255,102,0.6)] transition-all hover:scale-105 active:scale-95 text-center"
+        >
+          REGISTER TEAM NOW
+        </Link>
+      )}
     </div>
   );
 }

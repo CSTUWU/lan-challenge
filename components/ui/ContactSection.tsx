@@ -127,14 +127,33 @@ export function ContactSection() {
         </div>
 
         {/* Footer Bottom Bar */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+        <div className="mt-8 flex flex-col md:flex-row items-center justify-between text-xs text-gray-500 gap-4">
           <div>
             © 2026 <strong className="text-gray-300">COMPUTER SCIENCE & TECHNOLOGY DEGREE PROGRAM</strong>. LAN CHALLENGE.
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] font-mono">
+            <Link href="/" className="hover:text-[#00ff66] transition-colors">
+              HOME
+            </Link>
             <span>•</span>
-            <Link href="/rules" className="hover:text-emerald-400 transition-colors cursor-pointer">
-              TERMS OF DISPATCH
+            <Link href="/register" className="hover:text-[#00ff66] transition-colors">
+              REGISTER
+            </Link>
+            <span>•</span>
+            <Link href="/leaderboard" className="hover:text-[#00ff66] transition-colors">
+              LEADERBOARD
+            </Link>
+            <span>•</span>
+            <Link href="/rules" className="hover:text-[#00ff66] transition-colors">
+              RULES
+            </Link>
+            <span>•</span>
+            <Link href="/about" className="hover:text-[#00ff66] transition-colors">
+              ABOUT
+            </Link>
+            <span>•</span>
+            <Link href="/admin" className="text-gray-600 hover:text-emerald-400 transition-colors">
+              REFEREE PORTAL
             </Link>
           </div>
         </div>

@@ -2,13 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Volume2, VolumeX, ArrowRight, ShieldCheck, Home, Trophy, Lock, Menu, X } from 'lucide-react';
+import { Volume2, VolumeX, ArrowRight, ShieldCheck, Home, Trophy, UserPlus, Info, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 interface HeaderProps {
   isAudioEnabled: boolean;
   onToggleAudio: () => void;
-  onOpenModal: () => void;
+  onOpenModal?: () => void;
 }
 
 export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderProps) {
@@ -16,10 +16,11 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { label: 'COMMAND CENTER', href: '/', icon: Home },
-    { label: 'RULES & MAPS', href: '/rules', icon: ShieldCheck },
+    { label: 'HOME', href: '/', icon: Home },
+    { label: 'REGISTER', href: '/register', icon: UserPlus },
     { label: 'LEADERBOARD', href: '/leaderboard', icon: Trophy },
-    { label: 'ADMIN PORTAL', href: '/admin', icon: Lock },
+    { label: 'RULES', href: '/rules', icon: ShieldCheck },
+    { label: 'ABOUT', href: '/about', icon: Info },
   ];
 
   return (
@@ -86,13 +87,23 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
           </button>
 
           {/* Enlist CTA */}
-          <button
-            onClick={onOpenModal}
-            className="hidden sm:inline-flex items-center space-x-2 px-4 md:px-5 py-2 font-display text-xs md:text-sm font-black tracking-widest text-black bg-[#00ff66] hover:bg-emerald-400 rounded transition-all shadow-[0_0_16px_rgba(0,255,102,0.5)] hover:scale-105 active:scale-95 uppercase"
-          >
-            <span>ENLIST SQUAD</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          {onOpenModal ? (
+            <button
+              onClick={onOpenModal}
+              className="hidden sm:inline-flex items-center space-x-2 px-4 md:px-5 py-2 font-display text-xs md:text-sm font-black tracking-widest text-black bg-[#00ff66] hover:bg-emerald-400 rounded transition-all shadow-[0_0_16px_rgba(0,255,102,0.5)] hover:scale-105 active:scale-95 uppercase"
+            >
+              <span>ENLIST SQUAD</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          ) : (
+            <Link
+              href="/register"
+              className="hidden sm:inline-flex items-center space-x-2 px-4 md:px-5 py-2 font-display text-xs md:text-sm font-black tracking-widest text-black bg-[#00ff66] hover:bg-emerald-400 rounded transition-all shadow-[0_0_16px_rgba(0,255,102,0.5)] hover:scale-105 active:scale-95 uppercase"
+            >
+              <span>ENLIST SQUAD</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          )}
 
           {/* Mobile Menu Button */}
           <button
@@ -118,15 +129,25 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
               <span>{item.label}</span>
             </Link>
           ))}
-          <button
-            onClick={() => {
-              setMobileMenuOpen(false);
-              onOpenModal();
-            }}
-            className="w-full mt-2 py-2.5 bg-[#00ff66] text-black font-display font-bold uppercase rounded text-center tracking-wider"
-          >
-            ENLIST SQUAD NOW
-          </button>
+          {onOpenModal ? (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenModal();
+              }}
+              className="w-full mt-2 py-2.5 bg-[#00ff66] text-black font-display font-bold uppercase rounded text-center tracking-wider"
+            >
+              ENLIST SQUAD NOW
+            </button>
+          ) : (
+            <Link
+              href="/register"
+              onClick={() => setMobileMenuOpen(false)}
+              className="w-full mt-2 py-2.5 bg-[#00ff66] text-black font-display font-bold uppercase rounded text-center tracking-wider block"
+            >
+              ENLIST SQUAD NOW
+            </Link>
+          )}
         </div>
       )}
     </header>
