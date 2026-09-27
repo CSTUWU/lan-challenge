@@ -13,7 +13,7 @@ import { LeaderboardTeam, LiveMatchData } from '@/types/tournament';
 import { tournamentService } from '@/service/tournamentService';
 
 export default function LeaderboardPage() {
-  const [teams] = useState<LeaderboardTeam[]>(() => tournamentService.getLeaderboard());
+  const [teams, setTeams] = useState<LeaderboardTeam[]>(() => tournamentService.getLeaderboard());
   const [liveMatch, setLiveMatch] = useState<LiveMatchData>(() => tournamentService.getLiveMatch());
   const [selectedGroup, setSelectedGroup] = useState<string>('ALL');
   const [isLiveModalOpen, setIsLiveModalOpen] = useState(false);
@@ -22,11 +22,21 @@ export default function LeaderboardPage() {
   const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const syncData = () => {
+      if (document.hidden) return;
       setLiveMatch(tournamentService.getLiveMatch());
-    }, 2000);
+      setTeams([...tournamentService.getLeaderboard()]);
+    };
 
-    return () => clearInterval(interval);
+    const interval = setInterval(syncData, 2000);
+    window.addEventListener('storage', syncData);
+    window.addEventListener('tournament_data_updated', syncData);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', syncData);
+      window.removeEventListener('tournament_data_updated', syncData);
+    };
   }, []);
 
   const toggleKioskFullscreen = useCallback(() => {

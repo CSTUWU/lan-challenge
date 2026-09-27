@@ -1,4 +1,4 @@
-'use client';
+import Image from 'next/image';
 
 export function MapGallerySection() {
   const maps = [
@@ -50,10 +50,12 @@ export function MapGallerySection() {
           >
             {/* Image Container */}
             <div className="relative h-56 w-full overflow-hidden">
-              <img
+              <Image
                 src={map.src}
                 alt={map.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-90 contrast-110 group-hover:brightness-100"
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-90 contrast-110 group-hover:brightness-100"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0b0e14] via-transparent to-transparent" />
               <div className="absolute top-3 left-3 bg-[#050709]/90 border border-[#00ff66]/60 px-2.5 py-1 text-[10px] font-mono text-[#00ff66] uppercase tracking-wider rounded">

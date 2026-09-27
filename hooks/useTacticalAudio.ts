@@ -50,6 +50,10 @@ export function useTacticalAudio() {
 
       snapOsc.connect(snapGain);
       snapGain.connect(ctx.destination);
+      snapOsc.onended = () => {
+        snapOsc.disconnect();
+        snapGain.disconnect();
+      };
       snapOsc.start(t);
       snapOsc.stop(t + 0.08);
 
@@ -64,6 +68,10 @@ export function useTacticalAudio() {
 
       subOsc.connect(subGain);
       subGain.connect(ctx.destination);
+      subOsc.onended = () => {
+        subOsc.disconnect();
+        subGain.disconnect();
+      };
       subOsc.start(t + 0.05);
       subOsc.stop(t + 0.26);
     } catch (e) {
@@ -75,13 +83,19 @@ export function useTacticalAudio() {
     if (!audioCtxRef.current) {
       initAudio();
     }
-    if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
-      audioCtxRef.current.resume();
-    }
     setIsAudioEnabled((prev) => {
       const nextState = !prev;
-      if (nextState) {
-        setTimeout(playGunCockSound, 50);
+      if (audioCtxRef.current) {
+        if (nextState) {
+          if (audioCtxRef.current.state === 'suspended') {
+            audioCtxRef.current.resume();
+          }
+          setTimeout(playGunCockSound, 50);
+        } else {
+          if (audioCtxRef.current.state === 'running') {
+            audioCtxRef.current.suspend();
+          }
+        }
       }
       return nextState;
     });

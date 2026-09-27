@@ -1,12 +1,11 @@
-'use client';
-
+import { memo } from 'react';
 import { CountdownTimer } from './CountdownTimer';
 
 interface HeroSectionProps {
   stancePercentage: number;
 }
 
-export function HeroSection({ stancePercentage }: HeroSectionProps) {
+export const HeroSection = memo(function HeroSection({ stancePercentage }: HeroSectionProps) {
   let stanceText = 'HELMET SCAN: PATROL MODE';
   let stanceClass = 'text-gray-400 font-bold';
 
@@ -60,5 +59,5 @@ export function HeroSection({ stancePercentage }: HeroSectionProps) {
       </div>
     </section>
   );
-}
+});
 
