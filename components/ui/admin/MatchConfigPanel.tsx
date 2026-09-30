@@ -2,6 +2,7 @@
 
 import { MapPin } from 'lucide-react';
 import { LiveMatchData } from '@/types/tournament';
+import { TOURNAMENT_MAPS } from '@/lib/constants';
 import { CustomSelect, SelectOption } from '../CustomSelect';
 
 interface MatchConfigPanelProps {
@@ -9,13 +10,10 @@ interface MatchConfigPanelProps {
   onSaveLiveMatch: (updated: LiveMatchData) => void;
 }
 
-const MAP_OPTIONS: SelectOption[] = [
-  { label: 'mp_crash (Crash)', value: 'mp_crash' },
-  { label: 'mp_crossfire (Crossfire)', value: 'mp_crossfire' },
-  { label: 'mp_backlot (Backlot)', value: 'mp_backlot' },
-  { label: 'mp_strike (Strike)', value: 'mp_strike' },
-  { label: 'mp_citystreets (District)', value: 'mp_citystreets' },
-];
+const MAP_OPTIONS: SelectOption[] = TOURNAMENT_MAPS.map((m) => ({
+  label: `${m.name} (${m.displayName})`,
+  value: m.name,
+}));
 
 export function MatchConfigPanel({ liveMatch, onSaveLiveMatch }: MatchConfigPanelProps) {
   return (

@@ -5,6 +5,8 @@ import { Plus, Trash2 } from 'lucide-react';
 import { CustomSelect } from './CustomSelect';
 import { StatusAlertModal } from './modals/StatusAlertModal';
 
+import { tournamentService } from '@/service/tournamentService';
+
 interface RegistrationFormProps {
   onSuccess?: () => void;
   onCancel?: () => void;
@@ -91,6 +93,16 @@ export function RegistrationForm({ onSuccess, onCancel, isModal = false }: Regis
     }
 
     setIsSubmitting(true);
+    tournamentService.registerSquad({
+      teamName,
+      captainName,
+      contactNo: captainMobile,
+      campus: faculty,
+      members: [
+        `${captainName} (Captain)`,
+        ...members.map((m) => m.name.trim()),
+      ],
+    });
     onSuccess?.();
 
     setTimeout(() => {

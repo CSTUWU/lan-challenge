@@ -1,29 +1,10 @@
 import Image from 'next/image';
+import { TOURNAMENT_MAPS } from '@/lib/constants';
 
 export function MapGallerySection() {
-  const maps = [
-    {
-      id: 'crash',
-      name: 'MP_CRASH',
-      title: 'CRASH SITE COMBAT',
-      src: '/models/images001.jpg',
-      tag: '5v5 SEARCH & DESTROY',
-    },
-    {
-      id: 'crossfire',
-      name: 'MP_CROSSFIRE',
-      title: 'CROSSFIRE OVERWATCH',
-      src: '/models/image002.jpg',
-      tag: 'SNIPER & HELI ASSAULT',
-    },
-    {
-      id: 'backlot',
-      name: 'MP_BACKLOT',
-      title: 'BACKLOT URBAN WARFARE',
-      src: '/models/images003.jpg',
-      tag: 'CLOSE-QUARTERS TACTICAL',
-    },
-  ];
+  const maps = TOURNAMENT_MAPS.filter(
+    (map): map is typeof map & { src: string } => 'src' in map && Boolean(map.src)
+  );
 
   return (
     <section className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 py-12">

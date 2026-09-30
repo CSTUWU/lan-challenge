@@ -1,15 +1,29 @@
+export type TeamGroup = 'Group A' | 'Group B' | 'Playoffs';
+export type TeamStatus = 'CHAMPIONS' | 'QUALIFIED' | 'CONTENDER' | 'ELIMINATED';
+export type SquadStatus = 'VERIFIED' | 'PENDING' | 'REJECTED';
+
+export interface TournamentMap {
+  id: string;
+  name: string;
+  displayName: string;
+  title: string;
+  desc: string;
+  tag?: string;
+  src?: string;
+}
+
 export interface LeaderboardTeam {
   id: string;
   rank: number;
   name: string;
-  group: 'Group A' | 'Group B' | 'Playoffs';
+  group: TeamGroup;
   played: number;
   wins: number;
   losses: number;
   roundsWon: number;
   roundsLost: number;
   points: number;
-  status: 'CHAMPIONS' | 'QUALIFIED' | 'CONTENDER' | 'ELIMINATED';
+  status: TeamStatus;
 }
 
 export interface LiveMatchData {
@@ -38,6 +52,6 @@ export interface RegisteredSquad {
   contactNo: string;
   campus: string;
   members: string[];
-  status: 'VERIFIED' | 'PENDING' | 'REJECTED';
+  status: SquadStatus;
   dateRegistered: string;
 }

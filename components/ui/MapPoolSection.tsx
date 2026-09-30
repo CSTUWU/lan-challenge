@@ -1,4 +1,5 @@
 import { Target } from 'lucide-react';
+import { TournamentMap } from '@/types/tournament';
 
 interface MapItem {
   name: string;
@@ -6,7 +7,7 @@ interface MapItem {
 }
 
 interface MapPoolSectionProps {
-  maps: MapItem[];
+  maps: readonly MapItem[] | readonly TournamentMap[] | MapItem[] | TournamentMap[];
 }
 
 export function MapPoolSection({ maps }: MapPoolSectionProps) {

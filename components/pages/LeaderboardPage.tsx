@@ -10,7 +10,7 @@ import { LeaderboardPodium } from '@/components/ui/LeaderboardPodium';
 import { LeaderboardTable } from '@/components/ui/LeaderboardTable';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 import { LeaderboardTeam, LiveMatchData } from '@/types/tournament';
-import { tournamentService } from '@/service/tournamentService';
+import { tournamentService, sortLeaderboard } from '@/service/tournamentService';
 
 export default function LeaderboardPage() {
   const [teams, setTeams] = useState<LeaderboardTeam[]>(() => tournamentService.getLeaderboard());
@@ -57,13 +57,7 @@ export default function LeaderboardPage() {
     return () => document.removeEventListener('fullscreenchange', handleFsChange);
   }, []);
 
-  const top3 = [...teams]
-    .sort(
-      (a, b) =>
-        b.points - a.points ||
-        b.roundsWon - b.roundsLost - (a.roundsWon - a.roundsLost)
-    )
-    .slice(0, 3);
+  const top3 = sortLeaderboard(teams).slice(0, 3);
 
   return (
     <div className="relative min-h-screen bg-[#050709] text-white">

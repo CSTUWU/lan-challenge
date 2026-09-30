@@ -2,21 +2,32 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { RegistrationModal } from '@/components/ui/RegistrationModal';
 import { LoginForm } from '@/components/ui/LoginForm';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
+import { tournamentService } from '@/service/tournamentService';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    playGunCockSound();
+    if (tournamentService.verifyAdminPasscode(password) || tournamentService.verifyAdminPasscode(username)) {
+      setErrorMessage(null);
+      tournamentService.setAdminAuthenticated(true);
+      playGunCockSound();
+      router.push('/admin');
+    } else {
+      setErrorMessage('ACCESS DENIED: INVALID PASSCODE. USE REFEREE PASSCODE TO AUTHENTICATE.');
+    }
   };
 
   return (
@@ -48,6 +59,7 @@ export default function LoginPage() {
           password={password}
           setPassword={setPassword}
           onSubmit={handleLogin}
+          errorMessage={errorMessage}
         />
       </main>
 

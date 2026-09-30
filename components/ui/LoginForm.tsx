@@ -8,6 +8,7 @@ interface LoginFormProps {
   password: string;
   setPassword: (val: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  errorMessage?: string | null;
 }
 
 export function LoginForm({
@@ -16,6 +17,7 @@ export function LoginForm({
   password,
   setPassword,
   onSubmit,
+  errorMessage,
 }: LoginFormProps) {
   return (
     <div className="w-full max-w-md hud-border bg-[#0b0e14]/90 p-8 rounded-xl border border-[#00ff66]/40 glow-box-green my-12 text-center font-mono">
@@ -51,6 +53,12 @@ export function LoginForm({
             className="w-full px-4 py-3 bg-[#151a21] border border-[#00ff66]/40 rounded text-white text-sm focus:outline-none focus:border-[#00ff66]"
           />
         </div>
+
+        {errorMessage && (
+          <div className="p-3 bg-red-950/40 border border-red-500/50 rounded text-red-400 font-mono text-xs">
+            {errorMessage}
+          </div>
+        )}
 
         <button
           type="submit"
