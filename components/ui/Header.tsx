@@ -71,6 +71,7 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
           {/* Audio Toggle */}
           <button
             onClick={onToggleAudio}
+            aria-label={isAudioEnabled ? 'Mute sound effects' : 'Enable sound effects'}
             className={`flex items-center space-x-2 px-3 py-1.5 rounded text-xs tracking-wider font-mono border transition-all ${isAudioEnabled
               ? 'border-[#00ff66] bg-[#00ff66]/20 text-[#00ff66] shadow-[0_0_10px_rgba(0,255,102,0.3)]'
               : 'border-[#00ff66]/40 hover:border-[#00ff66] bg-[#1a1f26]/60 hover:bg-[#00ff66]/20 text-gray-300'
@@ -108,6 +109,7 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Close mobile menu' : 'Open mobile menu'}
             className="lg:hidden p-2 text-gray-300 hover:text-[#00ff66] border border-[#00ff66]/30 rounded bg-[#0b0e14]"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

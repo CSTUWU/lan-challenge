@@ -22,6 +22,7 @@ export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationMo
       <div className="hud-border bg-[#0b0e14] text-white w-full max-w-xl p-6 sm:p-8 rounded-lg glow-box-green border border-[#00ff66]/60 relative my-8 max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
+          aria-label="Close modal"
           className="absolute top-4 right-4 text-gray-400 hover:text-[#00ff66] font-mono text-xl p-1"
         >
           <X className="w-5 h-5" />
