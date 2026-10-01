@@ -1,4 +1,4 @@
-import { LeaderboardTeam, LiveMatchData, RegisteredSquad } from '@/types/tournament';
+import { LeaderboardTeam, LiveMatchData, RegisteredSquad, TournamentMap } from '@/types/tournament';
 
 export const DEFAULT_LEADERBOARD: LeaderboardTeam[] = [
   {
@@ -122,3 +122,58 @@ export const DEFAULT_SQUADS: RegisteredSquad[] = [
     dateRegistered: '2026-09-19',
   },
 ];
+
+export const TOURNAMENT_MAPS: TournamentMap[] = [
+  {
+    id: 'mp_crash',
+    name: 'mp_crash',
+    displayName: 'Crash',
+    title: 'CRASH SITE COMBAT',
+    desc: 'Downed helicopter courtyard. Fast-paced 5v5 S&D engagements.',
+    tag: '5v5 SEARCH & DESTROY',
+    src: '/models/images001.jpg',
+  },
+  {
+    id: 'mp_crossfire',
+    name: 'mp_crossfire',
+    displayName: 'Crossfire',
+    title: 'CROSSFIRE OVERWATCH',
+    desc: 'Central avenue sniper alley requiring tactical smoke & team coordination.',
+    tag: 'SNIPER & HELI ASSAULT',
+    src: '/models/image002.jpg',
+  },
+  {
+    id: 'mp_backlot',
+    name: 'mp_backlot',
+    displayName: 'Backlot',
+    title: 'BACKLOT URBAN WARFARE',
+    desc: 'Urban construction zone with multi-story sniper angles & tight choke points.',
+    tag: 'CLOSE-QUARTERS TACTICAL',
+    src: '/models/images003.jpg',
+  },
+  {
+    id: 'mp_strike',
+    name: 'mp_strike',
+    displayName: 'Strike',
+    title: 'STRIKE TOWN MARKET',
+    desc: 'Classic competitive map featuring balanced bomb sites A & B.',
+    tag: 'TACTICAL BOMB DEFUSAL',
+  },
+  {
+    id: 'mp_citystreets',
+    name: 'mp_citystreets',
+    displayName: 'District',
+    title: 'DISTRICT NIGHT COMBAT',
+    desc: 'Nighttime tactical warfare with flanking routes & close-quarters combat.',
+    tag: 'URBAN FLANK ASSAULT',
+  },
+];
+
+export const DEFAULT_ROSTERS: Record<string, string[]> = {
+  'GHOST REAPERS': ['Spectre (Captain)', 'Wraith (Sniper)', 'Shade (Assault)', 'Ember (SMG)', 'Onyx (Demo)'],
+  'TITAN STRIKERS': ['Vortex (Captain)', 'Blitz (Sniper)', 'Nova (Assault)', 'Pulse (SMG)', 'Rift (Demo)'],
+  'VIPER TACTICAL': ['Viper (Captain)', 'Venom (Sniper)', 'Cobra (Assault)', 'Fang (SMG)', 'Toxin (Demo)'],
+  'SHADOW SQUAD': ['Shadow (Captain)', 'Ghost (Sniper)', 'Phantom (Assault)', 'Mirage (SMG)', 'Spectre (Demo)'],
+  'ALPHA PROTOCOL': ['Alpha (Captain)', 'Ares (Sniper)', 'Titan (Assault)', 'Zeus (SMG)', 'Hades (Demo)'],
+  'BRAVO SPECTRES': ['Bravo (Captain)', 'Echo (Sniper)', 'Foxtrot (Assault)', 'Sierra (SMG)', 'Tango (Demo)'],
+};

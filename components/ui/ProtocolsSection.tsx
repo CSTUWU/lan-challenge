@@ -8,7 +8,7 @@ import { MapRotationCard } from './MapRotationCard';
 import { RegistrationBanner } from './RegistrationBanner';
 
 interface ProtocolsSectionProps {
-  onOpenModal: () => void;
+  onOpenModal?: () => void;
 }
 
 export function ProtocolsSection({ onOpenModal }: ProtocolsSectionProps) {

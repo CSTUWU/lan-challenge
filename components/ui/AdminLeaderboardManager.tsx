@@ -1,19 +1,19 @@
 'use client';
 
 import { Edit2, Trash2, Save } from 'lucide-react';
-import { LeaderboardTeam } from '@/types/tournament';
+import { LeaderboardTeam, TeamGroup, TeamStatus } from '@/types/tournament';
 import { CustomSelect } from './CustomSelect';
 
 interface TeamFormData {
   name: string;
-  group: 'Group A' | 'Group B' | 'Playoffs';
+  group: TeamGroup;
   played: number;
   wins: number;
   losses: number;
   roundsWon: number;
   roundsLost: number;
   points: number;
-  status: 'CHAMPIONS' | 'QUALIFIED' | 'CONTENDER' | 'ELIMINATED';
+  status: TeamStatus;
 }
 
 interface AdminLeaderboardManagerProps {

@@ -1,29 +1,10 @@
-'use client';
+import Image from 'next/image';
+import { TOURNAMENT_MAPS } from '@/lib/constants';
 
 export function MapGallerySection() {
-  const maps = [
-    {
-      id: 'crash',
-      name: 'MP_CRASH',
-      title: 'CRASH SITE COMBAT',
-      src: '/models/images001.jpg',
-      tag: '5v5 SEARCH & DESTROY',
-    },
-    {
-      id: 'crossfire',
-      name: 'MP_CROSSFIRE',
-      title: 'CROSSFIRE OVERWATCH',
-      src: '/models/image002.jpg',
-      tag: 'SNIPER & HELI ASSAULT',
-    },
-    {
-      id: 'backlot',
-      name: 'MP_BACKLOT',
-      title: 'BACKLOT URBAN WARFARE',
-      src: '/models/images003.jpg',
-      tag: 'CLOSE-QUARTERS TACTICAL',
-    },
-  ];
+  const maps = TOURNAMENT_MAPS.filter(
+    (map): map is typeof map & { src: string } => 'src' in map && Boolean(map.src)
+  );
 
   return (
     <section className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 py-12">
@@ -50,10 +31,12 @@ export function MapGallerySection() {
           >
             {/* Image Container */}
             <div className="relative h-56 w-full overflow-hidden">
-              <img
+              <Image
                 src={map.src}
                 alt={map.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-90 contrast-110 group-hover:brightness-100"
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-90 contrast-110 group-hover:brightness-100"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0b0e14] via-transparent to-transparent" />
               <div className="absolute top-3 left-3 bg-[#050709]/90 border border-[#00ff66]/60 px-2.5 py-1 text-[10px] font-mono text-[#00ff66] uppercase tracking-wider rounded">

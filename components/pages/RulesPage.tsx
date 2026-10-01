@@ -8,18 +8,11 @@ import { MapPoolSection } from '@/components/ui/MapPoolSection';
 import { RulesSectionGrid } from '@/components/ui/RulesSectionGrid';
 import { useState } from 'react';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
+import { TOURNAMENT_MAPS } from '@/lib/constants';
 
 export default function RulesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
-
-  const maps = [
-    { name: 'mp_backlot', desc: 'Urban construction zone with multi-story sniper angles & tight choke points.' },
-    { name: 'mp_crash', desc: 'Downed helicopter courtyard. Fast-paced 5v5 S&D engagements.' },
-    { name: 'mp_crossfire', desc: 'Central avenue sniper alley requiring tactical smoke & team coordination.' },
-    { name: 'mp_citystreets', desc: 'Nighttime tactical warfare with flanking routes & close-quarters combat.' },
-    { name: 'mp_strike', desc: 'Classic competitive map featuring balanced bomb sites A & B.' },
-  ];
 
   return (
     <div className="relative min-h-screen bg-[#050709] text-white">
@@ -61,7 +54,7 @@ export default function RulesPage() {
         </div>
 
         {/* Reusable MAP POOL SECTION */}
-        <MapPoolSection maps={maps} />
+        <MapPoolSection maps={TOURNAMENT_MAPS} />
 
         {/* Reusable RULES SECTIONS GRID */}
         <RulesSectionGrid />

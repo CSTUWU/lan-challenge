@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Trophy, Users, ArrowLeft, Radio } from 'lucide-react';
+import { Trophy, Users, ArrowLeft, Radio, LogOut } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { RegistrationModal } from '@/components/ui/RegistrationModal';
 import { AdminAuthGate } from '@/components/ui/AdminAuthGate';
@@ -10,8 +10,7 @@ import { AdminLiveController } from '@/components/ui/AdminLiveController';
 import { AdminLeaderboardManager } from '@/components/ui/AdminLeaderboardManager';
 import { AdminSquadRegistrations } from '@/components/ui/AdminSquadRegistrations';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
-import { LeaderboardTeam, LiveMatchData, RegisteredSquad } from '@/types/tournament';
-import { DEFAULT_SQUADS } from '@/lib/constants';
+import { LeaderboardTeam, LiveMatchData, RegisteredSquad, TeamGroup, TeamStatus } from '@/types/tournament';
 import { tournamentService } from '@/service/tournamentService';
 
 export default function AdminPage() {
@@ -23,20 +22,38 @@ export default function AdminPage() {
 
   const [activeTab, setActiveTab] = useState<'live' | 'leaderboard' | 'registrations'>('live');
   const [teams, setTeams] = useState<LeaderboardTeam[]>(() => tournamentService.getLeaderboard());
-  const [squads, setSquads] = useState<RegisteredSquad[]>(DEFAULT_SQUADS);
+  const [squads, setSquads] = useState<RegisteredSquad[]>(() => tournamentService.getSquads());
   const [liveMatch, setLiveMatch] = useState<LiveMatchData>(() => tournamentService.getLiveMatch());
+
+  useEffect(() => {
+    if (tournamentService.isAdminAuthenticated()) {
+      setIsAuthenticated(true);
+    }
+
+    const syncData = () => {
+      setSquads([...tournamentService.getSquads()]);
+      setTeams([...tournamentService.getLeaderboard()]);
+      setLiveMatch(tournamentService.getLiveMatch());
+    };
+    window.addEventListener('storage', syncData);
+    window.addEventListener('tournament_data_updated', syncData);
+    return () => {
+      window.removeEventListener('storage', syncData);
+      window.removeEventListener('tournament_data_updated', syncData);
+    };
+  }, []);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<{
     name: string;
-    group: 'Group A' | 'Group B' | 'Playoffs';
+    group: TeamGroup;
     played: number;
     wins: number;
     losses: number;
     roundsWon: number;
     roundsLost: number;
     points: number;
-    status: 'CHAMPIONS' | 'QUALIFIED' | 'CONTENDER' | 'ELIMINATED';
+    status: TeamStatus;
   }>({
     name: '',
     group: 'Group A',
@@ -61,13 +78,20 @@ export default function AdminPage() {
 
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pinInput === '1337' || pinInput === 'admin2026') {
+    if (tournamentService.verifyAdminPasscode(pinInput)) {
+      tournamentService.setAdminAuthenticated(true);
       setIsAuthenticated(true);
       setPinError(false);
       playGunCockSound();
     } else {
       setPinError(true);
     }
+  };
+
+  const handleLogout = () => {
+    tournamentService.setAdminAuthenticated(false);
+    setIsAuthenticated(false);
+    setPinInput('');
   };
 
   const handleSaveTeam = () => {
@@ -144,13 +168,8 @@ export default function AdminPage() {
   };
 
   const handleToggleSquadStatus = (squadId: string) => {
-    setSquads(
-      squads.map((s) =>
-        s.id === squadId
-          ? { ...s, status: s.status === 'VERIFIED' ? 'PENDING' : 'VERIFIED' }
-          : s
-      )
-    );
+    const updated = tournamentService.toggleSquadStatus(squadId);
+    setSquads(updated);
   };
 
   return (
@@ -228,6 +247,14 @@ export default function AdminPage() {
                 >
                   <Users className="w-4 h-4" />
                   <span>SQUAD REGISTRATIONS</span>
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-1.5 px-3 py-2 bg-red-950/30 border border-red-500/40 hover:bg-red-900/40 text-red-400 rounded transition-all tracking-wider ml-2"
+                  title="Terminate Referee Session"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>LOGOUT</span>
                 </button>
               </div>
             </div>

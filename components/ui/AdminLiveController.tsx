@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Radio } from 'lucide-react';
 import { LeaderboardTeam, LiveMatchData, RegisteredSquad } from '@/types/tournament';
+import { DEFAULT_ROSTERS } from '@/lib/constants';
+import { sortLeaderboard } from '@/service/tournamentService';
 import { SelectOption } from './CustomSelect';
 import { MatchConfigPanel } from './admin/MatchConfigPanel';
 import { TeamRosterCard } from './admin/TeamRosterCard';
@@ -15,15 +17,6 @@ interface AdminLiveControllerProps {
   onSaveLiveMatch: (updated: LiveMatchData) => void;
   onUpdateLeaderboard: (updatedTeams: LeaderboardTeam[]) => void;
 }
-
-const DEFAULT_ROSTERS: Record<string, string[]> = {
-  'GHOST REAPERS': ['Spectre (Captain)', 'Wraith (Sniper)', 'Shade (Assault)', 'Ember (SMG)', 'Onyx (Demo)'],
-  'TITAN STRIKERS': ['Vortex (Captain)', 'Blitz (Sniper)', 'Nova (Assault)', 'Pulse (SMG)', 'Rift (Demo)'],
-  'VIPER TACTICAL': ['Viper (Captain)', 'Venom (Sniper)', 'Cobra (Assault)', 'Fang (SMG)', 'Toxin (Demo)'],
-  'SHADOW SQUAD': ['Shadow (Captain)', 'Ghost (Sniper)', 'Phantom (Assault)', 'Mirage (SMG)', 'Spectre (Demo)'],
-  'ALPHA PROTOCOL': ['Alpha (Captain)', 'Ares (Sniper)', 'Titan (Assault)', 'Zeus (SMG)', 'Hades (Demo)'],
-  'BRAVO SPECTRES': ['Bravo (Captain)', 'Echo (Sniper)', 'Foxtrot (Assault)', 'Sierra (SMG)', 'Tango (Demo)'],
-};
 
 export function AdminLiveController({
   liveMatch,
@@ -131,13 +124,7 @@ export function AdminLiveController({
     });
 
     // Sort updated teams by points desc, then round diff desc
-    const sortedTeams = [...updatedTeams]
-      .sort((a, b) => {
-        const diffA = a.roundsWon - a.roundsLost;
-        const diffB = b.roundsWon - b.roundsLost;
-        return b.points - a.points || diffB - diffA;
-      })
-      .map((t, idx) => ({ ...t, rank: idx + 1 }));
+    const sortedTeams = sortLeaderboard(updatedTeams);
 
     onUpdateLeaderboard(sortedTeams);
 
