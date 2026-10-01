@@ -133,4 +133,4 @@ Ensure you have **Node.js 18+** and **npm** installed on your system.
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the [MIT License](LICENSE)..
