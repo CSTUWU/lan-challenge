@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 interface GhostHelmetCanvasProps {
   onProgress: (percent: number, statusText: string) => void;
@@ -102,6 +103,9 @@ export function GhostHelmetCanvas({
     let loadedModel: THREE.Object3D | null = null;
 
     const loader = new GLTFLoader();
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+    loader.setDRACOLoader(dracoLoader);
     loader.load(
       '/models/classic_ghost.glb',
       (gltf) => {
@@ -193,7 +197,10 @@ export function GhostHelmetCanvas({
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
 
+    let cachedWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
+
     const handleResize = () => {
+      cachedWidth = window.innerWidth;
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -234,7 +241,7 @@ export function GhostHelmetCanvas({
 
         const curveP = Math.sin(p * Math.PI * 0.5);
 
-        const width = window.innerWidth;
+        const width = cachedWidth;
         const isMobile = width < 640;
         const isTablet = width >= 640 && width < 1024;
 

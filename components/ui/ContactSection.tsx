@@ -127,32 +127,32 @@ export function ContactSection() {
         </div>
 
         {/* Footer Bottom Bar */}
-        <div className="mt-8 flex flex-col md:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+        <div className="mt-8 flex flex-col md:flex-row items-center justify-between text-xs text-gray-400 gap-4">
           <div>
-            © 2026 <strong className="text-gray-300">COMPUTER SCIENCE & TECHNOLOGY DEGREE PROGRAM</strong>. LAN CHALLENGE.
+            © 2026 <strong className="text-gray-200">COMPUTER SCIENCE & TECHNOLOGY DEGREE PROGRAM</strong>. LAN CHALLENGE.
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] font-mono">
-            <Link href="/" className="hover:text-[#00ff66] transition-colors">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[11px] font-mono">
+            <Link href="/" className="px-2 py-1 text-gray-300 hover:text-[#00ff66] transition-colors inline-block">
               HOME
             </Link>
             <span>•</span>
-            <Link href="/register" className="hover:text-[#00ff66] transition-colors">
+            <Link href="/register" className="px-2 py-1 text-gray-300 hover:text-[#00ff66] transition-colors inline-block">
               REGISTER
             </Link>
             <span>•</span>
-            <Link href="/leaderboard" className="hover:text-[#00ff66] transition-colors">
+            <Link href="/leaderboard" className="px-2 py-1 text-gray-300 hover:text-[#00ff66] transition-colors inline-block">
               LEADERBOARD
             </Link>
             <span>•</span>
-            <Link href="/rules" className="hover:text-[#00ff66] transition-colors">
+            <Link href="/rules" className="px-2 py-1 text-gray-300 hover:text-[#00ff66] transition-colors inline-block">
               RULES
             </Link>
             <span>•</span>
-            <Link href="/about" className="hover:text-[#00ff66] transition-colors">
+            <Link href="/about" className="px-2 py-1 text-gray-300 hover:text-[#00ff66] transition-colors inline-block">
               ABOUT
             </Link>
             <span>•</span>
-            <Link href="/admin" className="text-gray-600 hover:text-emerald-400 transition-colors">
+            <Link href="/admin" className="px-2 py-1 text-gray-400 hover:text-[#00ff66] transition-colors inline-block">
               REFEREE PORTAL
             </Link>
           </div>

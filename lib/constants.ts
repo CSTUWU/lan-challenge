@@ -131,7 +131,7 @@ export const TOURNAMENT_MAPS: TournamentMap[] = [
     title: 'CRASH SITE COMBAT',
     desc: 'Downed helicopter courtyard. Fast-paced 5v5 S&D engagements.',
     tag: '5v5 SEARCH & DESTROY',
-    src: '/models/images001.jpg',
+    src: '/models/images001.webp',
   },
   {
     id: 'mp_crossfire',
@@ -140,7 +140,7 @@ export const TOURNAMENT_MAPS: TournamentMap[] = [
     title: 'CROSSFIRE OVERWATCH',
     desc: 'Central avenue sniper alley requiring tactical smoke & team coordination.',
     tag: 'SNIPER & HELI ASSAULT',
-    src: '/models/image002.jpg',
+    src: '/models/image002.webp',
   },
   {
     id: 'mp_backlot',
@@ -149,7 +149,7 @@ export const TOURNAMENT_MAPS: TournamentMap[] = [
     title: 'BACKLOT URBAN WARFARE',
     desc: 'Urban construction zone with multi-story sniper angles & tight choke points.',
     tag: 'CLOSE-QUARTERS TACTICAL',
-    src: '/models/images003.jpg',
+    src: '/models/images003.webp',
   },
   {
     id: 'mp_strike',
