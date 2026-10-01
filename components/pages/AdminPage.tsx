@@ -2,16 +2,33 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { Trophy, Users, ArrowLeft, Radio, LogOut } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
-import { RegistrationModal } from '@/components/ui/RegistrationModal';
 import { AdminAuthGate } from '@/components/ui/AdminAuthGate';
-import { AdminLiveController } from '@/components/ui/AdminLiveController';
-import { AdminLeaderboardManager } from '@/components/ui/AdminLeaderboardManager';
-import { AdminSquadRegistrations } from '@/components/ui/AdminSquadRegistrations';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 import { LeaderboardTeam, LiveMatchData, RegisteredSquad, TeamGroup, TeamStatus } from '@/types/tournament';
 import { tournamentService } from '@/service/tournamentService';
+
+const RegistrationModal = dynamic(
+  () => import('@/components/ui/RegistrationModal').then((mod) => mod.RegistrationModal),
+  { ssr: false }
+);
+
+const AdminLiveController = dynamic(
+  () => import('@/components/ui/AdminLiveController').then((mod) => mod.AdminLiveController),
+  { ssr: false }
+);
+
+const AdminLeaderboardManager = dynamic(
+  () => import('@/components/ui/AdminLeaderboardManager').then((mod) => mod.AdminLeaderboardManager),
+  { ssr: false }
+);
+
+const AdminSquadRegistrations = dynamic(
+  () => import('@/components/ui/AdminSquadRegistrations').then((mod) => mod.AdminSquadRegistrations),
+  { ssr: false }
+);
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

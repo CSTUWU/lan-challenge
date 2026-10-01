@@ -17,6 +17,7 @@ export function LiveMatchModal({ isOpen, onClose, liveMatch }: LiveMatchModalPro
       <div className="relative w-full max-w-5xl hud-border bg-[#070a0e]/95 p-6 md:p-10 rounded-2xl border-2 border-[#00ff66] shadow-[0_0_50px_rgba(0,255,102,0.35)] glow-box-green my-8">
         <button
           onClick={onClose}
+          aria-label="Close match broadcast modal"
           className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#00ff66] border border-[#00ff66]/30 rounded-full bg-[#0b0e14] hover:bg-[#00ff66]/20 transition-all"
         >
           <X className="w-6 h-6" />
