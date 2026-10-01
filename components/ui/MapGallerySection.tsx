@@ -35,7 +35,8 @@ export function MapGallerySection() {
                 src={map.src}
                 alt={map.title}
                 fill
-                sizes="(max-width: 768px) 100vw, 33vw"
+                quality={75}
+                sizes="(max-width: 768px) 100vw, 400px"
                 className="object-cover group-hover:scale-105 transition-transform duration-500 filter brightness-90 contrast-110 group-hover:brightness-100"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0b0e14] via-transparent to-transparent" />
