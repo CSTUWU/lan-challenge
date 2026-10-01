@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
@@ -19,6 +20,7 @@ export function GhostHelmetCanvas({
   const mountRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const soundPlayedRef = useRef(false);
+  const [isModelLoaded, setIsModelLoaded] = useState(false);
 
   const callbacksRef = useRef({ onProgress, onStanceUpdate, onPlayAimSound });
   useEffect(() => {
@@ -148,6 +150,7 @@ export function GhostHelmetCanvas({
         helmetGroup.add(helmetPivot);
 
         scene.add(helmetGroup);
+        setIsModelLoaded(true);
         callbacksRef.current.onProgress(100, 'TACTICAL 3D GLB READY');
       },
       (xhr) => {
@@ -320,6 +323,21 @@ export function GhostHelmetCanvas({
 
   return (
     <div ref={mountRef} id="canvas-container" className="fixed inset-0 w-full h-full pointer-events-none z-0 transform-gpu">
+      {/* 22KB Instant Loading Placeholder Image */}
+      <div
+        className={`absolute inset-0 flex items-center justify-center transition-opacity duration-700 pointer-events-none ${
+          isModelLoaded ? 'opacity-0' : 'opacity-100'
+        }`}
+      >
+        <Image
+          src="/models/ghost_placeholder.webp"
+          alt="Ghost Helmet Loading Placeholder"
+          width={400}
+          height={400}
+          priority
+          className="w-[280px] sm:w-[360px] md:w-[420px] h-auto object-contain filter drop-shadow-[0_0_35px_rgba(0,255,102,0.4)] animate-pulse"
+        />
+      </div>
       <canvas ref={canvasRef} className="w-full h-full block" />
     </div>
   );

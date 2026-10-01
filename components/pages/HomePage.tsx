@@ -10,10 +10,19 @@ const GhostHelmetCanvas = dynamic(
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Header } from '@/components/ui/Header';
 import { HeroSection } from '@/components/ui/HeroSection';
-import { MapGallerySection } from '@/components/ui/MapGallerySection';
-import { ProtocolsSection } from '@/components/ui/ProtocolsSection';
-import { ContactSection } from '@/components/ui/ContactSection';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
+
+const MapGallerySection = dynamic(
+  () => import('@/components/ui/MapGallerySection').then((mod) => mod.MapGallerySection)
+);
+
+const ProtocolsSection = dynamic(
+  () => import('@/components/ui/ProtocolsSection').then((mod) => mod.ProtocolsSection)
+);
+
+const ContactSection = dynamic(
+  () => import('@/components/ui/ContactSection').then((mod) => mod.ContactSection)
+);
 
 const RegistrationModal = dynamic(
   () => import('@/components/ui/RegistrationModal').then((mod) => mod.RegistrationModal),
