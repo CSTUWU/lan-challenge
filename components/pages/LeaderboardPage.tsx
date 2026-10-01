@@ -42,11 +42,11 @@ export default function LeaderboardPage() {
   const toggleKioskFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
       if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+        document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => { });
       }
     } else {
       if (document.exitFullscreen) {
-        document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+        document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => { });
       }
     }
   }, []);
