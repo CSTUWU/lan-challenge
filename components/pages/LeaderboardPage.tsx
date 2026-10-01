@@ -2,15 +2,24 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { ArrowLeft, Maximize2, Monitor } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
-import { RegistrationModal } from '@/components/ui/RegistrationModal';
-import { LiveMatchModal } from '@/components/ui/LiveMatchModal';
 import { LeaderboardPodium } from '@/components/ui/LeaderboardPodium';
 import { LeaderboardTable } from '@/components/ui/LeaderboardTable';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 import { LeaderboardTeam, LiveMatchData } from '@/types/tournament';
 import { tournamentService, sortLeaderboard } from '@/service/tournamentService';
+
+const RegistrationModal = dynamic(
+  () => import('@/components/ui/RegistrationModal').then((mod) => mod.RegistrationModal),
+  { ssr: false }
+);
+
+const LiveMatchModal = dynamic(
+  () => import('@/components/ui/LiveMatchModal').then((mod) => mod.LiveMatchModal),
+  { ssr: false }
+);
 
 export default function LeaderboardPage() {
   const [teams, setTeams] = useState<LeaderboardTeam[]>(() => tournamentService.getLeaderboard());

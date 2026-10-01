@@ -13,8 +13,12 @@ import { HeroSection } from '@/components/ui/HeroSection';
 import { MapGallerySection } from '@/components/ui/MapGallerySection';
 import { ProtocolsSection } from '@/components/ui/ProtocolsSection';
 import { ContactSection } from '@/components/ui/ContactSection';
-import { RegistrationModal } from '@/components/ui/RegistrationModal';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
+
+const RegistrationModal = dynamic(
+  () => import('@/components/ui/RegistrationModal').then((mod) => mod.RegistrationModal),
+  { ssr: false }
+);
 
 export default function HomePage() {
   const [loadingProgress, setLoadingProgress] = useState(0);
