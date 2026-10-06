@@ -7,7 +7,7 @@ export function MapGallerySection() {
   );
 
   return (
-    <section className="relative z-20 max-w-7xl mx-auto px-6 md:px-12 py-12">
+    <section className="relative z-30 w-full max-w-7xl mx-auto px-6 md:px-12 py-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 border-b border-[#00ff66]/20 pb-4">
         <div>
           <div className="flex items-center space-x-2 text-[#00ff66] font-mono text-xs tracking-widest uppercase mb-1">

@@ -13,7 +13,10 @@ Organized for **Uva Wellassa University**.
 
 ## 🔥 Features
 
--  **Responsive 3D Ghost Model**: Three.js WebGL rendering with custom tactical lighting, cyan backlight outlines, and neon green contour rim lights. Automatically adapts scale, zoom, and viewport positions for Mobile (portrait top-right corner glide), Tablet, and Desktop screens.
+-  **Responsive Viewport-Height (VH) Scroll Choreography**: Seamless synchronization of the 3D model movements and CSS-based text animations. Perfectly aligned using dynamically scaled viewport-height (VH) thresholds, guaranteeing an identical cinematic pacing on mobile, tablet, and desktop screens.
+-  **Responsive 3D Ghost Model**: Three.js WebGL rendering with custom tactical lighting, cyan backlight outlines, and neon green contour rim lights. Automatically adapts scale, zoom, and viewport positions based on exact scroll progression.
+-  **Touch & Mouse Telemetry**: Extended WebGL canvas interactions to support both desktop mouse arrays and smooth mobile touch/drag telemetry.
+-  **Cinematic Tactical Image Scans**: Hardware-accelerated CSS `clip-path` animations overlaying green tactical HUD filters (`mix-blend-color`) with scanning scanlines to dynamically reveal section-specific imagery in sync with the 3D model.
 -  **IntersectionObserver GPU Optimization**: WebGL animation loop automatically pauses when scrolled off-screen or when the browser tab is hidden, saving GPU/CPU resources on mobile and low-end devices.
 -  **Interactive Leaderboard & Podium**: Live team rankings, match points, round differentials, top 3 podium highlights, and Group A/Group B filters.
 -  **Kiosk Arena Fullscreen Mode**: Dedicated 1-click fullscreen mode designed for physical touch kiosks and tournament arena standees.

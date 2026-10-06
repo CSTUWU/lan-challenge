@@ -1,20 +1,24 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import { HelmetCanvasFallback } from './HelmetCanvasFallback';
+import { setupTacticalLighting } from './setupTacticalLighting';
+import { createEmberParticles } from './createEmberParticles';
+import { loadGhostHelmetModel, LoadedHelmetResult } from './loadGhostHelmetModel';
+import { animateHelmetFrame } from './animateHelmetFrame';
 
 interface GhostHelmetCanvasProps {
   onProgress: (percent: number, statusText: string) => void;
   onStanceUpdate: (percentage: number) => void;
+  onScrollProgressUpdate: (progress: number) => void;
   onPlayAimSound: () => void;
 }
 
 export function GhostHelmetCanvas({
   onProgress,
   onStanceUpdate,
+  onScrollProgressUpdate,
   onPlayAimSound,
 }: GhostHelmetCanvasProps) {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -22,9 +26,9 @@ export function GhostHelmetCanvas({
   const soundPlayedRef = useRef(false);
   const [isModelLoaded, setIsModelLoaded] = useState(false);
 
-  const callbacksRef = useRef({ onProgress, onStanceUpdate, onPlayAimSound });
+  const callbacksRef = useRef({ onProgress, onStanceUpdate, onScrollProgressUpdate, onPlayAimSound });
   useEffect(() => {
-    callbacksRef.current = { onProgress, onStanceUpdate, onPlayAimSound };
+    callbacksRef.current = { onProgress, onStanceUpdate, onScrollProgressUpdate, onPlayAimSound };
   });
 
   useEffect(() => {
@@ -34,136 +38,41 @@ export function GhostHelmetCanvas({
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x050709, 0.008);
 
-    const camera = new THREE.PerspectiveCamera(
-      45,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      100
-    );
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0.4, 5.2);
 
     const renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current,
-      antialias: true,
+      antialias: window.devicePixelRatio < 2, // Disable antialias on retina to save GPU
       alpha: true,
       powerPreference: 'high-performance',
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    // Cap pixel ratio: 1 on mobile (perf), 1.5 on desktop (quality)
+    const isMobileDevice = window.innerWidth < 768;
+    renderer.setPixelRatio(isMobileDevice ? Math.min(window.devicePixelRatio, 1) : Math.min(window.devicePixelRatio, 1.5));
     renderer.setClearColor(0x000000, 0);
-    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.enabled = !isMobileDevice; // Disable shadows on mobile
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // Lighting
-    const ambient = new THREE.AmbientLight(0xffe6d5, 1.8);
-    scene.add(ambient);
+    const clock = new THREE.Clock();
+    let introStartTime = Infinity;
 
-    const keyLight = new THREE.DirectionalLight(0xfff5ea, 2.8);
-    keyLight.position.set(0, 4, 6);
-    scene.add(keyLight);
+    const tacticalLights = setupTacticalLighting(scene);
+    const emberSystem = createEmberParticles(scene);
 
-    const backLight = new THREE.DirectionalLight(0x00d0ff, 1.8);
-    backLight.position.set(0, 3, -5);
-    scene.add(backLight);
+    let modelData: LoadedHelmetResult | null = null;
 
-    const leftOrangeRim = new THREE.PointLight(0x00ff66, 6.0, 12);
-    leftOrangeRim.position.set(-3.0, 1.0, 1.0);
-    scene.add(leftOrangeRim);
-
-    const rightOrangeRim = new THREE.PointLight(0x00e65c, 6.0, 12);
-    rightOrangeRim.position.set(3.0, 1.0, 1.0);
-    scene.add(rightOrangeRim);
-
-    const chestLight = new THREE.PointLight(0x00ff66, 3.5, 6);
-    chestLight.position.set(0, -1.2, 2.0);
-    scene.add(chestLight);
-
-    // Floating Sparks & Embers (Optimized count for 60+ FPS)
-    const isMobileDevice = window.innerWidth < 768;
-    const NUM_EMBERS = isMobileDevice ? 150 : 350;
-    const emberPositions = new Float32Array(NUM_EMBERS * 3);
-    for (let i = 0; i < NUM_EMBERS; i++) {
-      emberPositions[i * 3 + 0] = (Math.random() - 0.5) * 8;
-      emberPositions[i * 3 + 1] = (Math.random() - 0.5) * 6;
-      emberPositions[i * 3 + 2] = (Math.random() - 0.5) * 4;
-    }
-    const emberGeo = new THREE.BufferGeometry();
-    emberGeo.setAttribute('position', new THREE.BufferAttribute(emberPositions, 3));
-    const emberMat = new THREE.PointsMaterial({
-      color: 0x00ff66,
-      size: 0.04,
-      transparent: true,
-      opacity: 0.85,
-      blending: THREE.AdditiveBlending,
-    });
-    const emberParticles = new THREE.Points(emberGeo, emberMat);
-    scene.add(emberParticles);
-
-    // GLTF Loading
-    let helmetPivot: THREE.Group | null = null;
-    let helmetGroup: THREE.Group | null = null;
-    let loadedModel: THREE.Object3D | null = null;
-
-    const loader = new GLTFLoader();
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
-    loader.setDRACOLoader(dracoLoader);
-    loader.load(
-      '/models/classic_ghost.glb',
-      (gltf) => {
-        const model = gltf.scene;
-        loadedModel = model;
-
-        const box = new THREE.Box3().setFromObject(model);
-        const center = box.getCenter(new THREE.Vector3());
-        const size = box.getSize(new THREE.Vector3());
-        const maxDim = Math.max(size.x, size.y, size.z);
-        const targetSize = 3.8;
-        const scale = targetSize / (maxDim || 1);
-
-        model.scale.set(scale, scale, scale);
-        model.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
-
-        model.traverse((child) => {
-          if ((child as THREE.Mesh).isMesh) {
-            child.castShadow = true;
-            child.receiveShadow = true;
-            const mesh = child as THREE.Mesh;
-            if (mesh.material) {
-              const mat = mesh.material as THREE.MeshStandardMaterial;
-              mat.transparent = false;
-              mat.opacity = 1.0;
-              mat.depthWrite = true;
-              mat.depthTest = true;
-              mat.roughness = 0.35;
-              mat.metalness = 0.65;
-              mat.needsUpdate = true;
-            }
-          }
-        });
-
-        helmetPivot = new THREE.Group();
-        helmetPivot.add(model);
-
-        helmetGroup = new THREE.Group();
-        helmetGroup.position.set(0, -0.2, 0);
-        helmetGroup.add(helmetPivot);
-
-        scene.add(helmetGroup);
+    const cleanupLoader = loadGhostHelmetModel(
+      scene,
+      (result) => {
+        modelData = result;
         setIsModelLoaded(true);
-        callbacksRef.current.onProgress(100, 'TACTICAL 3D GLB READY');
+        introStartTime = clock.getElapsedTime();
       },
-      (xhr) => {
-        if (xhr.lengthComputable && xhr.total > 0) {
-          const percent = Math.round((xhr.loaded / xhr.total) * 100);
-          const loadedMb = (xhr.loaded / (1024 * 1024)).toFixed(1);
-          const totalMb = (xhr.total / (1024 * 1024)).toFixed(1);
-          callbacksRef.current.onProgress(percent, `STREAMING GLB DATA: ${loadedMb} MB / ${totalMb} MB`);
-        }
-      }
+      (percent, text) => callbacksRef.current.onProgress(percent, text)
     );
 
-    // Mouse Parallax with Smooth Passive Listener
     let mouseX = 0;
     let mouseY = 0;
     const handleMouseMove = (e: MouseEvent) => {
@@ -172,23 +81,43 @@ export function GhostHelmetCanvas({
     };
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-    // Scroll Logic with Passive Listener
+    // Touch support for mobile model control
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        mouseX = (touch.clientX / window.innerWidth - 0.5) * 0.6;
+        mouseY = (touch.clientY / window.innerHeight - 0.5) * 0.6;
+      }
+    };
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    const handleTouchEnd = () => { mouseX = 0; mouseY = 0; };
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+
     let targetScrollProgress = 0;
     let currentScrollProgress = 0;
     let lastPercentage = -1;
+    let lastStateUpdateTime = 0; // Throttle React state updates
 
     const handleScroll = () => {
       const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-      const heroTriggerHeight = window.innerHeight * 1.35 - window.innerHeight;
-      let progress = scrollY / (heroTriggerHeight || 1);
-      if (progress < 0) progress = 0;
-      if (progress > 1) progress = 1;
+      const vh = window.innerHeight || 1;
+
+      let progress = scrollY <= vh * 1.4 ? scrollY / (vh * 1.4) : 1 + (scrollY - vh * 1.4) / vh;
+      progress = Math.max(progress, 0);
 
       targetScrollProgress = progress;
-      const percentage = Math.round(targetScrollProgress * 100);
-      if (percentage !== lastPercentage) {
-        lastPercentage = percentage;
-        callbacksRef.current.onStanceUpdate(percentage);
+
+      // Throttle React state updates to every 80ms to avoid re-render lag
+      const now = performance.now();
+      if (now - lastStateUpdateTime > 80) {
+        lastStateUpdateTime = now;
+        callbacksRef.current.onScrollProgressUpdate(progress);
+
+        const percentage = Math.min(Math.round(targetScrollProgress * 100), 100);
+        if (percentage !== lastPercentage) {
+          lastPercentage = percentage;
+          callbacksRef.current.onStanceUpdate(percentage);
+        }
       }
 
       if (progress > 0.65 && !soundPlayedRef.current) {
@@ -200,95 +129,55 @@ export function GhostHelmetCanvas({
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    let cachedWidth = typeof window !== 'undefined' ? window.innerWidth : 1024;
-
     const handleResize = () => {
-      cachedWidth = window.innerWidth;
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
     window.addEventListener('resize', handleResize, { passive: true });
 
-    // Intersection Observer to pause rendering when canvas is scrolled off screen
     let isCanvasVisible = true;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isCanvasVisible = entry.isIntersecting;
-      },
-      { threshold: 0.05 }
-    );
-    if (mountRef.current) {
-      observer.observe(mountRef.current);
-    }
+    const observer = new IntersectionObserver(([entry]) => {
+      isCanvasVisible = entry.isIntersecting;
+    }, { threshold: 0.05 });
 
-    // Smooth Animation Loop
-    const clock = new THREE.Clock();
+    if (mountRef.current) observer.observe(mountRef.current);
+
+    let introProgress = 0;
+
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       if (!isCanvasVisible || document.hidden) return;
 
       const elapsedTime = clock.getElapsedTime();
 
-      currentScrollProgress += (targetScrollProgress - currentScrollProgress) * 0.05;
-      const p = currentScrollProgress;
-
-      if (helmetGroup && helmetPivot) {
-        const breath = Math.sin(elapsedTime * 0.8) * 0.025;
-        const breathRot = Math.cos(elapsedTime * 0.5) * 0.015;
-
-        // Upright Y-axis spin: Align model front face straight forward + 360 turn
-        helmetPivot.rotation.x = 0;
-        helmetPivot.rotation.y = p * Math.PI * 2 + breathRot;
-        helmetPivot.rotation.z = 0;
-
-        const curveP = Math.sin(p * Math.PI * 0.5);
-
-        const width = cachedWidth;
-        const isMobile = width < 640;
-        const isTablet = width >= 640 && width < 1024;
-
-        const startX = 0.0;
-        const endX = isMobile ? 0.35 : isTablet ? 0.8 : 2.55;
-
-        const targetX = THREE.MathUtils.lerp(startX, endX, curveP);
-        helmetGroup.position.x += (targetX + mouseX * 0.15 - helmetGroup.position.x) * 0.08;
-
-        const startY = -1.1;
-        const endY = isMobile ? 1.0 : isTablet ? 0.8 : 0.8;
-        helmetGroup.position.y = THREE.MathUtils.lerp(startY, endY, curveP) + breath;
-
-        const startZoom = 3.6;
-        const endZoom = isMobile ? 0.8 : 0.8;
-        helmetGroup.position.z = THREE.MathUtils.lerp(startZoom, endZoom, curveP);
-
-        const startScale = 1.0;
-        const endScale = isMobile ? 0.32 : isTablet ? 0.38 : 0.40;
-        const currentScale = THREE.MathUtils.lerp(startScale, endScale, curveP);
-        helmetGroup.scale.set(currentScale, currentScale, currentScale);
-
-        if (leftOrangeRim && rightOrangeRim) {
-          leftOrangeRim.intensity = 4.5 + p * 4.0 + Math.sin(elapsedTime * 2) * 0.3;
-          rightOrangeRim.intensity = 4.5 + p * 4.0 + Math.cos(elapsedTime * 2) * 0.3;
-        }
+      if (modelData) {
+        const frameResult = animateHelmetFrame(
+          modelData.helmetGroup,
+          modelData.helmetPivot,
+          modelData.modelHalf,
+          camera,
+          renderer,
+          tacticalLights,
+          elapsedTime,
+          {
+            currentScrollProgress,
+            targetScrollProgress,
+            introProgress,
+            introStartTime,
+            mouseX,
+            mouseY,
+          }
+        );
+        introProgress = frameResult.introProgress;
+        currentScrollProgress = frameResult.currentScrollProgress;
       }
 
-      camera.position.x += (mouseX * 0.8 - camera.position.x) * 0.05;
-      camera.position.y += (0.4 - mouseY * 0.4 - camera.position.y) * 0.05;
+      camera.position.x += (mouseX * 0.4 - camera.position.x) * 0.06;
+      camera.position.y += (0.4 - mouseY * 0.4 - camera.position.y) * 0.06;
       camera.lookAt(0, 0.25, 0);
 
-      // Animate embers efficiently
-      const posArr = emberParticles.geometry.attributes.position.array as Float32Array;
-      for (let i = 0; i < NUM_EMBERS; i++) {
-        posArr[i * 3 + 1] += 0.008 + Math.sin(elapsedTime + i) * 0.002;
-        posArr[i * 3 + 0] += Math.sin(elapsedTime * 0.8 + i) * 0.003;
-        if (posArr[i * 3 + 1] > 3) {
-          posArr[i * 3 + 1] = -3;
-          posArr[i * 3 + 0] = (Math.random() - 0.5) * 8;
-        }
-      }
-      emberParticles.geometry.attributes.position.needsUpdate = true;
-
+      emberSystem.update(elapsedTime);
       renderer.render(scene, camera);
     };
 
@@ -297,17 +186,20 @@ export function GhostHelmetCanvas({
     return () => {
       cancelAnimationFrame(animationFrameId);
       observer.disconnect();
+      cleanupLoader();
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
 
-      if (loadedModel) {
-        loadedModel.traverse((child) => {
+      if (modelData?.loadedModel) {
+        modelData.loadedModel.traverse((child) => {
           if ((child as THREE.Mesh).isMesh) {
             const mesh = child as THREE.Mesh;
             mesh.geometry?.dispose();
             if (Array.isArray(mesh.material)) {
-              mesh.material.forEach((mat) => mat.dispose());
+              mesh.material.forEach((m) => m.dispose());
             } else if (mesh.material) {
               mesh.material.dispose();
             }
@@ -315,29 +207,15 @@ export function GhostHelmetCanvas({
         });
       }
 
-      emberGeo.dispose();
-      emberMat.dispose();
+      emberSystem.geometry.dispose();
+      emberSystem.material.dispose();
       renderer.dispose();
     };
   }, []);
 
   return (
-    <div ref={mountRef} id="canvas-container" className="fixed inset-0 w-full h-full pointer-events-none z-0 transform-gpu">
-      {/* 22KB Instant Loading Placeholder Image */}
-      <div
-        className={`absolute inset-0 flex items-center justify-center transition-opacity duration-700 pointer-events-none ${
-          isModelLoaded ? 'opacity-0' : 'opacity-100'
-        }`}
-      >
-        <Image
-          src="/models/ghost_placeholder.webp"
-          alt="Ghost Helmet Loading Placeholder"
-          width={400}
-          height={400}
-          priority
-          className="w-[280px] sm:w-[360px] md:w-[420px] h-auto object-contain filter drop-shadow-[0_0_35px_rgba(0,255,102,0.4)] animate-pulse"
-        />
-      </div>
+    <div ref={mountRef} id="canvas-container" className="fixed inset-0 w-full h-full pointer-events-none z-20 transform-gpu">
+      <HelmetCanvasFallback isLoaded={isModelLoaded} />
       <canvas ref={canvasRef} className="w-full h-full block" />
     </div>
   );

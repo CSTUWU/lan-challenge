@@ -14,7 +14,7 @@ const LOADING_IMAGES = [
   { src: '/models/ghost_placeholder2.webp', label: 'TACTICAL HUD' },
 ];
 
-export function LoadingScreen({ progress, statusText, isComplete }: LoadingScreenProps) {
+export function LoadingScreen({ progress, isComplete }: LoadingScreenProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [displayProgress, setDisplayProgress] = useState(0);
 
@@ -47,8 +47,6 @@ export function LoadingScreen({ progress, statusText, isComplete }: LoadingScree
   }, [progress]);
 
   if (isComplete) return null;
-
-  const currentAsset = LOADING_IMAGES[currentImageIndex];
 
   return (
     <div
