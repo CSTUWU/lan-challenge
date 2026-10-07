@@ -19,10 +19,11 @@ export const EventDetailsSection = memo(function EventDetailsSection({
   return (
     <section
       id="vision-strategy"
-      className="relative w-full flex items-center justify-end px-6 md:px-20 py-12 pointer-events-none z-30 overflow-hidden"
+      className="relative w-full px-6 md:px-16 py-12 pointer-events-none z-30 overflow-hidden border-t border-emerald-500/20"
     >
-      <div
-        className="relative w-full max-w-xs lg:max-w-sm pointer-events-auto"
+      <div className="w-full max-w-6xl mx-auto flex items-center justify-end">
+        <div
+          className="relative w-full max-w-xs lg:max-w-sm pointer-events-auto"
         style={{
           transform: `translateX(${translateX}px)`,
           opacity,
@@ -35,6 +36,7 @@ export const EventDetailsSection = memo(function EventDetailsSection({
             The core event details will be loaded here.
           </p>
         </div>
+      </div>
       </div>
     </section>
   );

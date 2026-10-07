@@ -65,10 +65,28 @@ export function animateHelmetFrame(
   // -----------------------------------------------------
   // 1. SCROLL X POSITION — Left -> Center -> Right
   // -----------------------------------------------------
-  const restXTarget = isMobile ? 0.8 : 1.0; // The default offset added later
-  const posLeft = isMobile ? -0.8 : -1.0; // Exact Left position on screen
+  // Calculate true screen width in 3D world space
+  const camDistForEdge = Math.max(camera.position.z - 1.5, 0.05); // Model is at z=1.5
+  const halfViewH_Edge = camDistForEdge * Math.tan(THREE.MathUtils.degToRad(camera.fov) * 0.5);
+  const halfViewW_Edge = halfViewH_Edge * camera.aspect;
+
+  // Calculate the same max-w-6xl container boundaries used in the HTML layout
+  const windowW = typeof window !== 'undefined' ? window.innerWidth : 1024;
+  const paddingX = windowW >= 768 ? 128 : 48; // md:px-16 is 64px*2=128px, px-6 is 24px*2=48px
+  const containerW = Math.min(1152, windowW - paddingX); // max-w-6xl is 1152px
+  const containerRatio = containerW / windowW;
+  const containerEdgeX = halfViewW_Edge * containerRatio;
+
+  // We want the model's center to be a fixed world-space distance from the CONTAINER edge, not screen edge
+  const edgeMargin = isMobile ? -0.1 : (isTablet ? 0.3 : 0.6);
+
+  // Calculate dynamic left/right bounds restricted to the container. Math.max prevents breaking on narrow phones.
+  const screenEdgeX = Math.max(containerEdgeX - edgeMargin, 0.8);
+
+  const restXTarget = isMobile ? (screenEdgeX * 0.8) : Math.min(1.2, screenEdgeX * 0.6); // Default resting offset
+  const posLeft = -screenEdgeX; // Dynamic Left position inside container
   const posCenter = 0.0; // Exact Center position on screen
-  const posRight = isMobile ? 0.8 : 1.0; // Exact Right position on screen
+  const posRight = screenEdgeX; // Dynamic Right position inside container
 
   // We must subtract restXTarget from our desired screen positions because it gets added back later
   const rawLeft = posLeft - restXTarget;
@@ -79,8 +97,9 @@ export function animateHelmetFrame(
   const targetX2 = THREE.MathUtils.lerp(targetX1, rawCenter, ease2); // Left to Center
   const targetX3 = THREE.MathUtils.lerp(targetX2, rawRight, ease3); // Center to Right
   const targetX4 = THREE.MathUtils.lerp(targetX3, rawCenter, ease4); // Right back to Center
-  
-  const posTopRightX = isMobile ? 1.0 : 1.5;
+
+  // Dynamically push to the exact right edge of the container layout boundary
+  const posTopRightX = isMobile ? Math.max(1.0, screenEdgeX) : screenEdgeX;
   const rawTopRightX = posTopRightX - restXTarget;
   const targetX5 = THREE.MathUtils.lerp(targetX4, rawTopRightX, ease5); // Center to Top Right Corner
   const rawTargetX = targetX5;
@@ -93,8 +112,12 @@ export function animateHelmetFrame(
   const targetY1 = heroEndY + (moveUpAmount * ease1); // Move up when going left
   const targetY2 = THREE.MathUtils.lerp(targetY1, heroEndY, ease2); // Back down to normal when centered
   const targetY3 = targetY2 + (moveUpAmount * ease3); // Move up again when going right
-  const targetY4 = targetY3 + (moveUpAmount * 2 * ease4); // Move further up
-  const targetY5 = targetY4 + (moveUpAmount * 3 * ease5); // Move to Top corner
+  // Phase 4: Move UP so it sits comfortably in the middle
+  const phase4Y = heroEndY + (isMobile ? 0.4 : 1.0);
+  const targetY4 = THREE.MathUtils.lerp(targetY3, phase4Y, ease4);
+  // Phase 5: Move to Top corner
+  const topCornerY = heroEndY + (isMobile ? 1.5 : 2.5);
+  const targetY5 = THREE.MathUtils.lerp(targetY4, topCornerY, ease5);
   const baseY = targetY5;
   const dipY = 0; // No dipping on scroll
 
@@ -130,7 +153,7 @@ export function animateHelmetFrame(
   const rot2 = THREE.MathUtils.lerp(rot1, rawRotCenter, ease2); // To center (looking forward)
   const rot3 = THREE.MathUtils.lerp(rot2, rawRotRight, ease3); // To right side (looking left)
   const rot4 = THREE.MathUtils.lerp(rot3, rawRotCenter, ease4); // Back to center (looking forward)
-  
+
   // Phase 5: Do a full 360 degree spin (Math.PI * 2) while moving to the right corner
   // It should end up facing forward (rawRotCenter) after spinning
   const spinAmount = Math.PI * 2;
@@ -145,7 +168,7 @@ export function animateHelmetFrame(
     if (introProgress > 1) introProgress = 1;
   }
   const easeIntro = Math.sin(introProgress * Math.PI * 0.5);
-  const restX = isMobile ? 0.8 : 1.0;             // resting position: slightly right of center
+  const restX = restXTarget;                      // resting position dynamically scaled
   const restRotation = -0.6;                      // resting rotation: slight left-facing angle
   const introX = restX + (1 - easeIntro) * (isMobile ? 3.3 : 5.5);
   const introRot = restRotation + (1 - easeIntro) * (-Math.PI / 2);
