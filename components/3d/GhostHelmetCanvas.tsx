@@ -107,9 +107,9 @@ export function GhostHelmetCanvas({
 
       targetScrollProgress = progress;
 
-      // Throttle React state updates to every 80ms to avoid re-render lag
+      // Throttle React state updates to every 16ms (approx 60fps) to avoid lag but keep smoothness
       const now = performance.now();
-      if (now - lastStateUpdateTime > 80) {
+      if (now - lastStateUpdateTime > 16) {
         lastStateUpdateTime = now;
         callbacksRef.current.onScrollProgressUpdate(progress);
 

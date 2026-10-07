@@ -47,15 +47,15 @@ export const HeroSection = memo(function HeroSection({ stancePercentage, isReady
   const T2_IN_START   = vh * 3.9;
   const T2_IN_END     = vh * 5.0;
   const T2_OUT_START  = vh * 6.0;
-  const T2_OUT_END    = vh * 7.0;
+  const T2_OUT_END    = vh * 6.8;
 
-  const T3_IN_START   = vh * 6.8;
-  const T3_IN_END     = vh * 7.8;
-  const T3_OUT_START  = vh * 8.8;
-  const T3_OUT_END    = vh * 9.7;
+  const T3_IN_START   = vh * 7.0;
+  const T3_IN_END     = vh * 8.0;
+  const T3_OUT_START  = vh * 10.0;
+  const T3_OUT_END    = vh * 11.0;
 
-  const STANCE_FADE_START = vh * 8.0;
-  const SECTION_HEIGHT = vh * 10.0;
+  const STANCE_FADE_START = vh * 9.5;
+  const SECTION_HEIGHT = vh * 11.5;
 
   // Vision & Strategy text
   const slideXPhase    = Math.min(Math.max((scrollPx - T1_IN_START) / Math.max(T1_IN_END - T1_IN_START, 1), 0), 1);

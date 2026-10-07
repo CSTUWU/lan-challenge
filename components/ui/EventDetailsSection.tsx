@@ -1,18 +1,39 @@
 'use client';
 
-import { memo } from 'react';
-import { TacticalBadge } from './common/TacticalBadge';
+import { memo, useEffect, useState } from 'react';
 
 interface EventDetailsSectionProps {
-  scrollProgress: number; // 0 to 2+, passed from parent or hook
+  scrollProgress: number; // Keeping for compatibility
 }
 
 export const EventDetailsSection = memo(function EventDetailsSection({
   scrollProgress,
 }: EventDetailsSectionProps) {
-  // Content visible when p2Raw goes 0→1 (progress 1→2)
-  const p2Raw = Math.min(Math.max(scrollProgress - 1, 0), 1);
-  const contentVisibility = Math.min(Math.max((p2Raw - 0.3) / 0.45, 0), 1);
+  const [vh, setVh] = useState(800);
+  const [scrollPx, setScrollPx] = useState(0);
+
+  useEffect(() => {
+    const updateVh = () => setVh(window.innerHeight || 800);
+    updateVh();
+    window.addEventListener('resize', updateVh, { passive: true });
+    return () => window.removeEventListener('resize', updateVh);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollPx(window.pageYOffset || document.documentElement.scrollTop);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Hero Section ends at 11.5vh. Animate between 11.0vh and 12.0vh
+  const startAnim = vh * 11.0;
+  const endAnim = vh * 12.0;
+  const progress = Math.min(Math.max((scrollPx - startAnim) / Math.max(endAnim - startAnim, 1), 0), 1);
+  
+  const contentVisibility = Math.min(Math.max((progress - 0.3) / 0.45, 0), 1);
   const translateX = (1 - contentVisibility) * 120;
   const opacity = contentVisibility;
 
@@ -30,12 +51,7 @@ export const EventDetailsSection = memo(function EventDetailsSection({
           transition: 'none',
         }}
       >
-        <div className="pr-4 border-r-2 border-[#00ff66]/50 flex flex-col items-end text-right">
-          <TacticalBadge label="NEXT SECTION // DETAILS" className="mb-4" />
-          <p className="text-gray-200 font-tactical text-sm md:text-base leading-relaxed mb-6 drop-shadow-md">
-            The core event details will be loaded here.
-          </p>
-        </div>
+        {/* Content goes here */}
       </div>
       </div>
     </section>

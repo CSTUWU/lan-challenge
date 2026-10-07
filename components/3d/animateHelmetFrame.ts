@@ -58,8 +58,8 @@ export function animateHelmetFrame(
   const p4 = Math.min(Math.max((scrollPx - VH * 6.0) / (VH * 0.8), 0), 1);
   const ease4 = Math.sin(p4 * Math.PI * 0.5);
 
-  // Phase 5: Move Top Right, Spin, Zoom Out (8.8vh -> 9.7vh)
-  const p5 = Math.min(Math.max((scrollPx - VH * 8.8) / (VH * 0.9), 0), 1);
+  // Phase 5: Move Top Right, Spin, Zoom Out (10.0vh -> 11.0vh)
+  const p5 = Math.min(Math.max((scrollPx - VH * 10.0) / (VH * 1.0), 0), 1);
   const ease5 = Math.sin(p5 * Math.PI * 0.5);
 
   // -----------------------------------------------------
