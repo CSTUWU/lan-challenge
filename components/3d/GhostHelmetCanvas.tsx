@@ -214,7 +214,7 @@ export function GhostHelmetCanvas({
   }, []);
 
   return (
-    <div ref={mountRef} id="canvas-container" className="fixed inset-0 w-full h-full pointer-events-none z-20 transform-gpu">
+    <div ref={mountRef} id="canvas-container" className="fixed inset-0 w-full h-full pointer-events-none z-0 transform-gpu">
       <HelmetCanvasFallback isLoaded={isModelLoaded} />
       <canvas ref={canvasRef} className="w-full h-full block" />
     </div>

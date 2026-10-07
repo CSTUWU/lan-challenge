@@ -33,10 +33,11 @@ export function animateHelmetFrame(
   const breath = Math.sin(elapsedTime * 0.8) * 0.025;
   const breathRot = Math.cos(elapsedTime * 0.5) * 0.015;
 
-  // Viewport setup (Check if PC or Mobile)
+  // Calculate continuous scaling ratio based on standard 1200px desktop width
   const width = typeof window !== 'undefined' ? window.innerWidth : 1024;
   const isMobile = width < 640;
-  const isTablet = width >= 640 && width < 1024;
+  const baseWidth = 1200;
+  const scaleRatio = Math.min(Math.max(width / baseWidth, 0.35), 1.2);
 
   // Use actual browser scrollY (raw, not smoothed) for precise pixel-based phase control
   const scrollPx = typeof window !== 'undefined' ? (window.pageYOffset || document.documentElement.scrollTop) : 0;
@@ -58,8 +59,9 @@ export function animateHelmetFrame(
   const p4 = Math.min(Math.max((scrollPx - VH * 6.0) / (VH * 0.8), 0), 1);
   const ease4 = Math.sin(p4 * Math.PI * 0.5);
 
-  // Phase 5: Move Top Right, Spin, Zoom Out (10.0vh -> 11.0vh)
-  const p5 = Math.min(Math.max((scrollPx - VH * 10.0) / (VH * 1.0), 0), 1);
+  // Phase 5: Move Top Right, Spin, Zoom Out
+  const phase5Start = isMobile ? 7.8 : 8.5;
+  const p5 = Math.min(Math.max((scrollPx - VH * phase5Start) / (VH * 1.0), 0), 1);
   const ease5 = Math.sin(p5 * Math.PI * 0.5);
 
   // -----------------------------------------------------
@@ -77,13 +79,11 @@ export function animateHelmetFrame(
   const containerRatio = containerW / windowW;
   const containerEdgeX = halfViewW_Edge * containerRatio;
 
-  // We want the model's center to be a fixed world-space distance from the CONTAINER edge, not screen edge
-  const edgeMargin = isMobile ? -0.1 : (isTablet ? 0.3 : 0.6);
+  // On Mobile, keep model centered horizontally so it stays focal in the top 55% zone
+  const edgeMargin = isMobile ? 0 : 0.5 * scaleRatio;
+  const screenEdgeX = isMobile ? 0.2 : Math.max(containerEdgeX - edgeMargin, 0.5 * scaleRatio);
+  const restXTarget = isMobile ? 0 : Math.min(1.2 * scaleRatio, screenEdgeX * 0.6); // Default resting offset
 
-  // Calculate dynamic left/right bounds restricted to the container. Math.max prevents breaking on narrow phones.
-  const screenEdgeX = Math.max(containerEdgeX - edgeMargin, 0.8);
-
-  const restXTarget = isMobile ? (screenEdgeX * 0.8) : Math.min(1.2, screenEdgeX * 0.6); // Default resting offset
   const posLeft = -screenEdgeX; // Dynamic Left position inside container
   const posCenter = 0.0; // Exact Center position on screen
   const posRight = screenEdgeX; // Dynamic Right position inside container
@@ -98,8 +98,8 @@ export function animateHelmetFrame(
   const targetX3 = THREE.MathUtils.lerp(targetX2, rawRight, ease3); // Center to Right
   const targetX4 = THREE.MathUtils.lerp(targetX3, rawCenter, ease4); // Right back to Center
 
-  // Dynamically push to the exact right edge of the container layout boundary
-  const posTopRightX = isMobile ? Math.max(1.0, screenEdgeX) : screenEdgeX;
+  // Dynamically push to top right corner on phase 5
+  const posTopRightX = isMobile ? 0.8 : screenEdgeX;
   const rawTopRightX = posTopRightX - restXTarget;
   const targetX5 = THREE.MathUtils.lerp(targetX4, rawTopRightX, ease5); // Center to Top Right Corner
   const rawTargetX = targetX5;
@@ -107,16 +107,17 @@ export function animateHelmetFrame(
   // -----------------------------------------------------
   // 2. Y POSITION (UP/DOWN MOVEMENT)
   // -----------------------------------------------------
-  const heroEndY = isMobile ? -1.6 : -2;
-  const moveUpAmount = isMobile ? 0.3 : 0.6;
+  // On mobile, position model in top focal area (-0.6 to -1.0)
+  const heroEndY = isMobile ? -0.8 : -2.0 * scaleRatio;
+  const moveUpAmount = isMobile ? 0.3 : 0.6 * scaleRatio;
   const targetY1 = heroEndY + (moveUpAmount * ease1); // Move up when going left
   const targetY2 = THREE.MathUtils.lerp(targetY1, heroEndY, ease2); // Back down to normal when centered
   const targetY3 = targetY2 + (moveUpAmount * ease3); // Move up again when going right
   // Phase 4: Move UP so it sits comfortably in the middle
-  const phase4Y = heroEndY + (isMobile ? 0.4 : 1.0);
+  const phase4Y = heroEndY + (isMobile ? 0.4 : 1.0 * scaleRatio);
   const targetY4 = THREE.MathUtils.lerp(targetY3, phase4Y, ease4);
   // Phase 5: Move to Top corner
-  const topCornerY = heroEndY + (isMobile ? 1.5 : 2.5);
+  const topCornerY = heroEndY + (isMobile ? 1.5 : 2.2 * scaleRatio);
   const targetY5 = THREE.MathUtils.lerp(targetY4, topCornerY, ease5);
   const baseY = targetY5;
   const dipY = 0; // No dipping on scroll
@@ -124,14 +125,14 @@ export function animateHelmetFrame(
   // -----------------------------------------------------
   // 3. MODEL SCALE (ZOOM IN/OUT)
   // -----------------------------------------------------
-  const heroEndScale = isMobile ? 1.1 : isTablet ? 1.4 : 1.7;
-  const scaleReduction = isMobile ? 0.15 : 0.25;
+  const heroEndScale = isMobile ? 0.95 : 1.6 * scaleRatio;
+  const scaleReduction = isMobile ? 0.15 : 0.25 * scaleRatio;
   const scale1 = heroEndScale - (scaleReduction * ease1); // Scale down when left
   const scale2 = THREE.MathUtils.lerp(scale1, heroEndScale, ease2); // Scale normal when centered
   const scale3 = scale2 - (scaleReduction * ease3); // Scale down when right
-  const zoomOutScale = isMobile ? 0.4 : isTablet ? 0.5 : 0.7; // MORE Extra zoom out for phase 4
+  const zoomOutScale = isMobile ? 0.5 : 0.6 * scaleRatio; // MORE Extra zoom out for phase 4
   const scale4 = THREE.MathUtils.lerp(scale3, zoomOutScale, ease4); // Zoom out
-  const topCornerScale = isMobile ? 0.2 : isTablet ? 0.25 : 0.3; // Very small for top corner
+  const topCornerScale = isMobile ? 0.25 : 0.3 * scaleRatio; // Very small for top corner
   const scale5 = THREE.MathUtils.lerp(scale4, topCornerScale, ease5); // Zoom out to corner
   const currentScale = scale5;
   helmetGroup.scale.set(currentScale, currentScale, currentScale);
@@ -160,7 +161,8 @@ export function animateHelmetFrame(
   const rot5 = THREE.MathUtils.lerp(rot4, rawRotCenter + spinAmount, ease5);
   const visionRot = rot5;
 
-  helmetGroup.position.z = 1.5;
+  // Push model back on Z-axis for mobile so it sits in background behind text
+  helmetGroup.position.z = isMobile ? (0.2 - p * 1.8) : 1.5;
 
   // Intro Animation Logic
   if (elapsedTime > state.introStartTime + 0.6) {
@@ -168,9 +170,9 @@ export function animateHelmetFrame(
     if (introProgress > 1) introProgress = 1;
   }
   const easeIntro = Math.sin(introProgress * Math.PI * 0.5);
-  const restX = restXTarget;                      // resting position dynamically scaled
-  const restRotation = -0.6;                      // resting rotation: slight left-facing angle
-  const introX = restX + (1 - easeIntro) * (isMobile ? 3.3 : 5.5);
+  const restX = restXTarget;
+  const restRotation = -0.6;
+  const introX = restX + (1 - easeIntro) * (5.5 * scaleRatio);
   const introRot = restRotation + (1 - easeIntro) * (-Math.PI / 2);
 
 
