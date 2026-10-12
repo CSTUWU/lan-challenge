@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
 const GhostHelmetCanvas = dynamic(
@@ -14,6 +14,10 @@ import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 
 const MapGallerySection = dynamic(
   () => import('@/components/ui/MapGallerySection').then((mod) => mod.MapGallerySection)
+);
+
+const EventDetailsSection = dynamic(
+  () => import('@/components/ui/EventDetailsSection').then((mod) => mod.EventDetailsSection)
 );
 
 const ProtocolsSection = dynamic(
@@ -34,7 +38,15 @@ export default function HomePage() {
   const [loadingStatus, setLoadingStatus] = useState('STREAMING DATA...');
   const [isLoadingComplete, setIsLoadingComplete] = useState(false);
   const [stancePercentage, setStancePercentage] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+  }, []);
 
   const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
 
@@ -66,6 +78,7 @@ export default function HomePage() {
       <GhostHelmetCanvas
         onProgress={handleLoadingProgress}
         onStanceUpdate={setStancePercentage}
+        onScrollProgressUpdate={setScrollProgress}
         onPlayAimSound={playGunCockSound}
       />
 
@@ -77,8 +90,9 @@ export default function HomePage() {
         onOpenModal={handleOpenModal}
       />
 
-      <main className="relative z-20 w-full min-h-screen">
-        <HeroSection stancePercentage={stancePercentage} />
+      <main className="relative w-full min-h-screen">
+        <HeroSection stancePercentage={stancePercentage} isReady={isLoadingComplete} scrollProgress={scrollProgress} />
+        <EventDetailsSection scrollProgress={scrollProgress} />
         <MapGallerySection />
         <ProtocolsSection onOpenModal={handleOpenModal} />
         <ContactSection />

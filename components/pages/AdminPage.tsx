@@ -31,7 +31,12 @@ const AdminSquadRegistrations = dynamic(
 );
 
 export default function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return tournamentService.isAdminAuthenticated();
+    }
+    return false;
+  });
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,10 +48,6 @@ export default function AdminPage() {
   const [liveMatch, setLiveMatch] = useState<LiveMatchData>(() => tournamentService.getLiveMatch());
 
   useEffect(() => {
-    if (tournamentService.isAdminAuthenticated()) {
-      setIsAuthenticated(true);
-    }
-
     const syncData = () => {
       setSquads([...tournamentService.getSquads()]);
       setTeams([...tournamentService.getLeaderboard()]);

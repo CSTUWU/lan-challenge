@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Shield, Award, Terminal, Cpu, MapPin, Users, Globe, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Shield, Award, Terminal, Cpu, MapPin, Users, Globe } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 

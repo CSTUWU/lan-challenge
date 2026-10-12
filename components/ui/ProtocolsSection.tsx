@@ -13,7 +13,7 @@ interface ProtocolsSectionProps {
 
 export function ProtocolsSection({ onOpenModal }: ProtocolsSectionProps) {
   return (
-    <section className="relative w-full min-h-screen px-6 md:px-16 py-20 bg-gradient-to-b from-transparent via-[#080b0f]/30 to-[#050709]/60 border-t border-emerald-500/30">
+    <section className="relative w-full min-h-screen px-6 md:px-16 py-20 z-30 border-t border-emerald-500/30">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div>
