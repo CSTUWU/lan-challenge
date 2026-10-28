@@ -44,9 +44,9 @@
 }
 
 .tactical-grid {
-  background-image: linear-gradient(rgba(0, 255, 102, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 102, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
+  background-image: linear-gradient(rgba(0, 255, 65, 0.25) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 65, 0.25) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 .hud-border {
@@ -90,6 +90,156 @@
   pointer-events: none;
   background: radial-gradient(circle at center, transparent 40%, rgba(3, 4, 6, 0.85) 95%),
     repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15) 2px, transparent 2px, transparent 4px);
+}
+
+/* Full-screen loading sequence animations */
+.loader-scanline {
+  animation: loader-scan 4s linear infinite;
+}
+
+@keyframes loader-scan {
+  0% {
+    top: -25%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 120%;
+    opacity: 0;
+  }
+}
+
+.loader-bg {
+  animation: loader-bg-zoom 18s ease-in-out infinite alternate;
+}
+
+@keyframes loader-bg-zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+.loader-glow {
+  animation: loader-glow 9s ease-in-out infinite alternate;
+}
+
+@keyframes loader-glow {
+  from {
+    transform: translate(-52%, -48%) scale(0.95);
+    opacity: 0.6;
+  }
+  to {
+    transform: translate(-48%, -52%) scale(1.12);
+    opacity: 1;
+  }
+}
+
+.loader-grid {
+  animation: loader-grid 3s linear infinite;
+}
+
+@keyframes loader-grid {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 40px 40px;
+  }
+}
+
+.loader-flicker {
+  animation: loader-flicker 4.5s infinite;
+}
+
+@keyframes loader-flicker {
+  0%,
+  91%,
+  93%,
+  96%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 0.35;
+  }
+  94%,
+  95% {
+    opacity: 0.7;
+  }
+}
+
+.loader-spin {
+  animation: loader-spin 12s linear infinite;
+}
+
+.loader-spin-reverse {
+  animation: loader-spin 8s linear infinite reverse;
+}
+
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader-radar {
+  animation: loader-spin 2.4s linear infinite;
+  background: conic-gradient(
+    from 0deg,
+    rgba(0, 255, 102, 0.55),
+    rgba(0, 255, 102, 0.08) 35%,
+    transparent 60%
+  );
+}
+
+.loader-pulse-ring {
+  animation: loader-pulse-ring 2.2s ease-out infinite;
+}
+
+@keyframes loader-pulse-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+.loader-shimmer {
+  animation: loader-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes loader-shimmer {
+  0% {
+    transform: translateX(-150%);
+  }
+  100% {
+    transform: translateX(450%);
+  }
+}
+
+.loader-blink {
+  animation: loader-blink 1s steps(2, end) infinite;
+}
+
+@keyframes loader-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
 }
 
 ::-webkit-scrollbar {

@@ -34,8 +34,9 @@ const RegistrationModal = dynamic(
 
 export default function HomePage() {
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingStatus, setLoadingStatus] = useState('STREAMING DATA...');
-  const [isLoadingComplete, setIsLoadingComplete] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState('INITIALIZING TACTICAL ARENA');
+  const [isSceneReady, setIsSceneReady] = useState(false);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
   const [stancePercentage, setStancePercentage] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,11 +48,18 @@ export default function HomePage() {
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setMinTimeElapsed(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const isLoadingComplete = isSceneReady && minTimeElapsed;
+
   const handleLoadingProgress = useCallback((percent: number, statusText: string) => {
     setLoadingProgress(percent);
     setLoadingStatus(statusText);
     if (percent >= 100) {
-      setTimeout(() => setIsLoadingComplete(true), 600);
+      setIsSceneReady(true);
     }
   }, []);
 

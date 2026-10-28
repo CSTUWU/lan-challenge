@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
 
 interface LoadingScreenProps {
   progress: number;
@@ -9,87 +9,96 @@ interface LoadingScreenProps {
   isComplete: boolean;
 }
 
-const LOADING_IMAGES = [
-  { src: '/models/ghost_placeholder1.webp', label: 'HELMET MESH' },
-  { src: '/models/ghost_placeholder2.webp', label: 'TACTICAL HUD' },
-];
+const MIN_LOADING_TIME = 3000;
 
 export function LoadingScreen({ progress, isComplete }: LoadingScreenProps) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [displayProgress, setDisplayProgress] = useState(0);
+  const [isFading, setIsFading] = useState(false);
+  const [isMounted, setIsMounted] = useState(true);
+  const startTimeRef = useRef<number | null>(null);
 
-  // Rotate tactical theme images every 1.6 seconds
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % LOADING_IMAGES.length);
-    }, 1600);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Smooth realistic progress bar: climbs smoothly up to 90%, holds at 90%, then fills to 100%
-  useEffect(() => {
+    if (startTimeRef.current === null) {
+      startTimeRef.current = Date.now();
+    }
     const interval = setInterval(() => {
+      const elapsed = Date.now() - (startTimeRef.current ?? Date.now());
+      const timeTarget = Math.min(95, Math.round((elapsed / MIN_LOADING_TIME) * 95));
+      const target = isComplete ? 100 : Math.max(timeTarget, Math.min(progress, 95));
+
       setDisplayProgress((current) => {
-        if (progress >= 100) {
-          if (current < 100) return Math.min(100, current + 5);
-          return 100;
-        } else {
-          const target = Math.min(90, Math.max(progress, 90));
-          if (current < target) {
-            return Math.min(target, current + Math.max(1, Math.round((target - current) * 0.12)));
-          }
-          return current;
-        }
+        if (current >= target) return current;
+        const step = Math.max(1, Math.round((target - current) * 0.18));
+        return Math.min(target, current + step);
       });
     }, 50);
 
     return () => clearInterval(interval);
-  }, [progress]);
+  }, [progress, isComplete]);
 
-  if (isComplete) return null;
+  useEffect(() => {
+    if (!isComplete) return;
+
+    const fadeTimer = setTimeout(() => setIsFading(true), 500);
+    const unmountTimer = setTimeout(() => setIsMounted(false), 1300);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(unmountTimer);
+    };
+  }, [isComplete]);
+
+  if (!isMounted) return null;
 
   return (
     <div
       id="loader-screen"
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050709] text-white transition-opacity duration-700 ${isComplete || (progress >= 100 && displayProgress >= 100) ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
+      className={`fixed inset-0 z-[100] overflow-hidden bg-[#050709] text-white transition-opacity duration-700 ${
+        isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'
+      }`}
     >
-      <div className="hud-border p-6 sm:p-8 bg-[#0b0e14]/95 max-w-md w-11/12 text-center relative glow-box-green backdrop-blur-xl rounded-xl border border-[#00ff66]/40 flex flex-col items-center">
-        {/* Animated Rotating Image Placeholder */}
-        <div className="relative w-36 h-36 sm:w-44 sm:h-44 mb-3 flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-[#00ff66]/15 rounded-full blur-xl animate-pulse" />
-          {LOADING_IMAGES.map((img, idx) => (
-            <Image
-              key={img.src}
-              src={img.src}
-              alt={img.label}
-              width={200}
-              height={200}
-              priority
-              className={`w-full h-full object-contain absolute inset-0 z-10 transition-all duration-700 filter drop-shadow-[0_0_22px_rgba(0,255,102,0.55)] ${idx === currentImageIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'
-                }`}
-            />
-          ))}
-        </div>
+      {/* Esports arena texture backdrop */}
+      <Image
+        src="/models/gaming_event.jpg"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="loader-bg object-cover opacity-30"
+      />
+      <div className="absolute inset-0 bg-[#050709]/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050709]/80 via-transparent to-[#050709]" />
 
-        <h2 className="text-xl sm:text-2xl font-display font-black tracking-wider text-white mb-1 uppercase">
-          LAN CHALLENGE ARENA
-        </h2>
-        <p className="text-xs text-[#00ff66] font-mono mb-4 uppercase tracking-widest animate-pulse font-bold">
-          LOADING...
+      {/* Clean radial green vignette background without harsh grid */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,255,102,0.08),transparent_70%)]" />
+
+      {/* Slow drifting ambient glow */}
+      <div className="loader-glow absolute left-1/2 top-1/2 h-[70vmax] w-[70vmax] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(0,255,102,0.16),transparent_65%)]" />
+
+      {/* Faint moving scanline */}
+      <div className="loader-scanline absolute left-0 right-0 h-24 bg-gradient-to-b from-transparent via-[#00ff66]/8 to-transparent" />
+
+      {/* Center brand */}
+      <div className="relative z-10 flex h-full w-full flex-col items-center justify-center px-6">
+        <h1 className="glow-text-green text-center font-display text-4xl font-black uppercase tracking-wider text-[#00ff66] sm:text-6xl md:text-7xl lg:text-8xl">
+          LAN<span className="font-light">:</span>CHALLENGE
+        </h1>
+
+        <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.4em] text-[#00ff66]/70 sm:text-xs">
+          Computer Science &amp; Technology
         </p>
+      </div>
 
-        {/* Smooth Progressive Loading Bar */}
-        <div className="w-full bg-[#1a1f26] h-3.5 rounded overflow-hidden border border-[#00ff66]/50 p-0.5 mb-2 shadow-inner">
+      {/* Minimal progress readout */}
+      <div className="absolute bottom-12 left-1/2 z-10 w-full max-w-xs -translate-x-1/2 px-6">
+        <div className="relative h-1 overflow-hidden rounded-full bg-[#0b0e14]">
           <div
-            className="h-full bg-gradient-to-r from-emerald-500 via-[#00ff66] to-green-400 rounded transition-all duration-200"
+            className="absolute inset-y-0 left-0 bg-gradient-to-r from-emerald-600 via-[#00ff66] to-emerald-300 transition-[width] duration-150 ease-out"
             style={{ width: `${displayProgress}%` }}
           />
         </div>
-
-        <div className="w-full flex justify-between font-mono text-[11px] text-gray-400">
-          <span className="text-gray-400 tracking-wider">TACTICAL ARENA</span>
-          <span className="text-[#00ff66] font-bold">{displayProgress}%</span>
+        <div className="mt-2 text-center font-mono text-[10px] tracking-[0.3em] text-[#00ff66]/80">
+          {displayProgress}%
         </div>
       </div>
     </div>
