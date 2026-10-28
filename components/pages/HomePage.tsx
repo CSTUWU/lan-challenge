@@ -10,7 +10,6 @@ const GhostHelmetCanvas = dynamic(
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Header } from '@/components/ui/Header';
 import { HeroSection } from '@/components/ui/HeroSection';
-import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 
 const MapGallerySection = dynamic(
   () => import('@/components/ui/MapGallerySection').then((mod) => mod.MapGallerySection)
@@ -48,8 +47,6 @@ export default function HomePage() {
     window.scrollTo(0, 0);
   }, []);
 
-  const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
-
   const handleLoadingProgress = useCallback((percent: number, statusText: string) => {
     setLoadingProgress(percent);
     setLoadingStatus(statusText);
@@ -60,8 +57,7 @@ export default function HomePage() {
 
   const handleOpenModal = useCallback(() => {
     setIsModalOpen(true);
-    playGunCockSound();
-  }, [playGunCockSound]);
+  }, []);
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
@@ -79,14 +75,11 @@ export default function HomePage() {
         onProgress={handleLoadingProgress}
         onStanceUpdate={setStancePercentage}
         onScrollProgressUpdate={setScrollProgress}
-        onPlayAimSound={playGunCockSound}
       />
 
       <div className="screen-overlay fixed inset-0 z-10 pointer-events-none" />
 
       <Header
-        isAudioEnabled={isAudioEnabled}
-        onToggleAudio={toggleAudio}
         onOpenModal={handleOpenModal}
       />
 
@@ -101,7 +94,6 @@ export default function HomePage() {
       <RegistrationModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onSuccess={playGunCockSound}
       />
     </div>
   );

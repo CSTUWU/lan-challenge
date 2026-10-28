@@ -3,19 +3,13 @@
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Shield, Award, Terminal, Cpu, MapPin, Users, Globe } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
-import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 
 export default function AboutPage() {
-  const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
-
   return (
     <div className="relative min-h-screen bg-[#050709] text-white">
       <div className="screen-overlay fixed inset-0 z-10 pointer-events-none" />
 
-      <Header
-        isAudioEnabled={isAudioEnabled}
-        onToggleAudio={toggleAudio}
-      />
+      <Header />
 
       <main className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-28 pb-24">
         {/* Navigation Breadcrumb */}
@@ -157,7 +151,6 @@ export default function AboutPage() {
             </Link>
             <Link
               href="/register"
-              onClick={() => playGunCockSound()}
               className="px-6 py-3 bg-[#00ff66] hover:bg-emerald-400 text-black font-display font-black text-xs uppercase tracking-widest rounded transition-all shadow-[0_0_20px_rgba(0,255,102,0.5)] flex items-center space-x-2"
             >
               <span>REGISTER NOW</span>

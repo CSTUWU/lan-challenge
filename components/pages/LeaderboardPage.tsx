@@ -7,7 +7,6 @@ import { ArrowLeft, Maximize2, Monitor } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { LeaderboardPodium } from '@/components/ui/LeaderboardPodium';
 import { LeaderboardTable } from '@/components/ui/LeaderboardTable';
-import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 import { LeaderboardTeam, LiveMatchData } from '@/types/tournament';
 import { tournamentService, sortLeaderboard } from '@/service/tournamentService';
 
@@ -28,7 +27,6 @@ export default function LeaderboardPage() {
   const [isLiveModalOpen, setIsLiveModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
 
   useEffect(() => {
     const syncData = () => {
@@ -73,11 +71,8 @@ export default function LeaderboardPage() {
       <div className="screen-overlay fixed inset-0 z-10 pointer-events-none" />
 
       <Header
-        isAudioEnabled={isAudioEnabled}
-        onToggleAudio={toggleAudio}
         onOpenModal={() => {
           setIsModalOpen(true);
-          playGunCockSound();
         }}
       />
 
@@ -96,7 +91,6 @@ export default function LeaderboardPage() {
             <button
               onClick={() => {
                 toggleKioskFullscreen();
-                playGunCockSound();
               }}
               aria-label={isFullscreen ? 'Exit kiosk mode' : 'Enter kiosk fullscreen mode'}
               className="inline-flex items-center justify-center space-x-2 px-4 py-2.5 bg-[#0b0e14] border border-[#00ff66]/50 hover:bg-[#00ff66]/20 text-[#00ff66] rounded-lg shadow-[0_0_15px_rgba(0,255,102,0.25)] transition-all font-mono text-xs group"
@@ -110,7 +104,6 @@ export default function LeaderboardPage() {
             <button
               onClick={() => {
                 setIsLiveModalOpen(true);
-                playGunCockSound();
               }}
               aria-label="Open live match broadcast modal"
               className="inline-flex items-center justify-center space-x-2.5 px-5 py-2.5 bg-[#0b0e14] border-2 border-red-500 hover:border-[#00ff66] text-white rounded-lg shadow-[0_0_20px_rgba(239,68,68,0.35)] hover:shadow-[0_0_25px_rgba(0,255,102,0.4)] transition-all group font-mono text-xs"
@@ -164,7 +157,6 @@ export default function LeaderboardPage() {
       <RegistrationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={playGunCockSound}
       />
     </div>
   );

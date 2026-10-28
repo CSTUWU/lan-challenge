@@ -4,19 +4,13 @@ import Link from 'next/link';
 import { ArrowLeft, Users, Shield, Cpu, MessageSquare } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { RegistrationForm } from '@/components/ui/RegistrationForm';
-import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 
 export default function RegisterPage() {
-  const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
-
   return (
     <div className="relative min-h-screen bg-[#050709] text-white">
       <div className="screen-overlay fixed inset-0 z-10 pointer-events-none" />
 
-      <Header
-        isAudioEnabled={isAudioEnabled}
-        onToggleAudio={toggleAudio}
-      />
+      <Header />
 
       <main className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pt-28 pb-24">
         {/* Navigation Breadcrumb */}
@@ -90,7 +84,6 @@ export default function RegisterPage() {
 
           <RegistrationForm
             isModal={false}
-            onSuccess={playGunCockSound}
           />
         </div>
       </main>

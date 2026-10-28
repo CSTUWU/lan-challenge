@@ -6,7 +6,7 @@ import { RegistrationForm } from './RegistrationForm';
 interface RegistrationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 export function RegistrationModal({ isOpen, onClose, onSuccess }: RegistrationModalProps) {
