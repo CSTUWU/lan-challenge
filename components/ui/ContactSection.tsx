@@ -1,6 +1,6 @@
 'use client';
 
-import { Phone, MessageCircle, Globe, ExternalLink, Mail, MapPin, Zap } from 'lucide-react';
+import { Phone, Mail, MapPin } from 'lucide-react';
 
 import Link from 'next/link';
 

@@ -5,10 +5,9 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { ArrowLeft, Maximize2, Monitor } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
-import { LeaderboardPodium } from '@/components/ui/LeaderboardPodium';
 import { LeaderboardTable } from '@/components/ui/LeaderboardTable';
 import { LeaderboardTeam, LiveMatchData } from '@/types/tournament';
-import { tournamentService, sortLeaderboard } from '@/service/tournamentService';
+import { tournamentService } from '@/service/tournamentService';
 
 const RegistrationModal = dynamic(
   () => import('@/components/ui/RegistrationModal').then((mod) => mod.RegistrationModal),
@@ -63,8 +62,6 @@ export default function LeaderboardPage() {
     document.addEventListener('fullscreenchange', handleFsChange);
     return () => document.removeEventListener('fullscreenchange', handleFsChange);
   }, []);
-
-  const top3 = sortLeaderboard(teams).slice(0, 3);
 
   return (
     <div className="relative min-h-screen bg-[#050709] text-white">
@@ -127,15 +124,10 @@ export default function LeaderboardPage() {
             <span>LIVE TOURNAMENT RANKINGS</span>
           </div>
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-display font-black text-white glow-text-green uppercase tracking-wide">
-            OFFICIAL LEADERBOARD & STANDINGS
+            OFFICIAL LEADERBOARD
           </h1>
-          <p className="mt-2 text-gray-300 font-tactical text-sm md:text-base max-w-3xl leading-relaxed">
-            Real-time standings, match points, round differentials, and bracket qualifications for Call of Duty 4 LAN Challenge. Click the broadcast button above to view live match details.
-          </p>
-        </div>
 
-        {/* Reusable TOP 3 PODIUM */}
-        <LeaderboardPodium top3={top3} />
+        </div>
 
         {/* Reusable FULL LEADERBOARD TABLE */}
         <LeaderboardTable
