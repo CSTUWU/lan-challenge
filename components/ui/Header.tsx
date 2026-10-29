@@ -2,36 +2,30 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Volume2, VolumeX, ArrowRight, ShieldCheck, Home, Trophy, UserPlus, Info, Menu, X } from 'lucide-react';
+import { ArrowRight, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 interface HeaderProps {
-  isAudioEnabled: boolean;
-  onToggleAudio: () => void;
   onOpenModal?: () => void;
 }
 
-export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderProps) {
+export function Header({ onOpenModal }: HeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { label: 'HOME', href: '/', icon: Home },
-    { label: 'REGISTER', href: '/register', icon: UserPlus },
-    { label: 'LEADERBOARD', href: '/leaderboard', icon: Trophy },
-    { label: 'RULES', href: '/rules', icon: ShieldCheck },
-    { label: 'ABOUT', href: '/about', icon: Info },
+    { label: 'HOME', href: '/' },
+    { label: 'REGISTER', href: '/register' },
+    { label: 'LEADERBOARD', href: '/leaderboard' },
+    { label: 'RULES', href: '/rules' },
+    { label: 'ABOUT', href: '/about' },
   ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-3.5 backdrop-blur-xl bg-[#050709]/85 border-b border-[#00ff66]/25 shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Brand / Logo */}
-        <Link href="/" className="flex items-center space-x-3 group">
-          <div className="relative flex items-center justify-center">
-            <div className="w-3.5 h-3.5 bg-[#00ff66] animate-ping opacity-75 rounded-sm absolute"></div>
-            <div className="w-3 h-3 bg-[#00ff66] rounded-sm shadow-[0_0_10px_#00ff66]"></div>
-          </div>
+        <Link href="/" className="flex items-center group">
           <div className="flex flex-col">
             <span className="font-display font-black text-xl md:text-2xl tracking-wider text-white group-hover:text-[#00ff66] transition-colors leading-none">
               LAN<span className="text-[#00ff66] font-light">:</span>CHALLENGE
@@ -43,24 +37,20 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center space-x-1 font-mono text-xs">
+        <nav className="hidden lg:flex items-center space-x-6 font-mono text-xs">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
-            const Icon = item.icon;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative flex items-center space-x-2 px-3.5 py-2 rounded transition-all duration-200 border ${isActive
-                  ? 'border-[#00ff66]/60 bg-[#00ff66]/15 text-[#00ff66] font-bold shadow-[0_0_12px_rgba(0,255,102,0.2)]'
-                  : 'border-transparent text-gray-300 hover:text-white hover:bg-[#1a1f26]/60'
-                  }`}
+                className={`tracking-wider uppercase transition-colors duration-200 ${
+                  isActive
+                    ? 'text-[#00ff66] font-bold'
+                    : 'text-gray-300 hover:text-white'
+                }`}
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#00ff66]' : 'text-gray-400'}`} />
-                <span className="tracking-wider uppercase">{item.label}</span>
-                {isActive && (
-                  <span className="absolute -bottom-[15px] left-1/2 -translate-x-1/2 w-8 h-[2px] bg-[#00ff66] shadow-[0_0_8px_#00ff66]" />
-                )}
+                {item.label}
               </Link>
             );
           })}
@@ -68,25 +58,6 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
 
         {/* Action Controls */}
         <div className="flex items-center space-x-3">
-          {/* Audio Toggle */}
-          <button
-            onClick={onToggleAudio}
-            aria-label={isAudioEnabled ? 'Mute sound effects' : 'Enable sound effects'}
-            className={`flex items-center space-x-2 px-3 py-1.5 rounded text-xs tracking-wider font-mono border transition-all ${isAudioEnabled
-              ? 'border-[#00ff66] bg-[#00ff66]/20 text-[#00ff66] shadow-[0_0_10px_rgba(0,255,102,0.3)]'
-              : 'border-[#00ff66]/40 hover:border-[#00ff66] bg-[#1a1f26]/60 hover:bg-[#00ff66]/20 text-gray-300'
-              }`}
-          >
-            {isAudioEnabled ? (
-              <Volume2 className="w-4 h-4 text-[#00ff66] animate-pulse" />
-            ) : (
-              <VolumeX className="w-4 h-4 text-gray-400" />
-            )}
-            <span className="hidden sm:inline">
-              {isAudioEnabled ? 'SFX: ON' : 'SFX: OFF'}
-            </span>
-          </button>
-
           {/* Enlist CTA */}
           {onOpenModal ? (
             <button
@@ -125,9 +96,8 @@ export function Header({ isAudioEnabled, onToggleAudio, onOpenModal }: HeaderPro
               key={item.href}
               href={item.href}
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center space-x-2 px-3 py-2 rounded bg-[#0b0e14] border border-[#00ff66]/20 text-gray-200 hover:text-[#00ff66]"
+              className="flex items-center px-3 py-2 text-gray-200 hover:text-[#00ff66]"
             >
-              <item.icon className="w-4 h-4 text-[#00ff66]" />
               <span>{item.label}</span>
             </Link>
           ))}

@@ -7,17 +7,7 @@ interface HeroSectionProps {
   scrollProgress?: number;
 }
 
-export const HeroSection = memo(function HeroSection({ stancePercentage, isReady = false }: HeroSectionProps) {
-  let stanceText = 'HELMET SCAN: PATROL MODE';
-  let stanceClass = 'text-gray-400 font-bold';
-
-  if (stancePercentage >= 70) {
-    stanceText = 'GHOST HELMET: TARGET LOCKED';
-    stanceClass = 'text-[#00ff66] font-black glow-text-green';
-  } else if (stancePercentage >= 30) {
-    stanceText = '360° OPTICAL INSPECTION...';
-    stanceClass = 'text-emerald-400 font-bold';
-  }
+export const HeroSection = memo(function HeroSection({ isReady = false }: HeroSectionProps) {
 
   // Dynamically compute scroll thresholds based on viewport height and width
   const [vh, setVh] = useState(800);
@@ -113,10 +103,6 @@ export const HeroSection = memo(function HeroSection({ stancePercentage, isReady
   const img4In = Math.min(Math.max((scrollPx - T4_IN_END) / Math.max(vh * 0.4, 1), 0), 1);
   const img4Out = Math.min(Math.max((scrollPx - T4_OUT_START) / Math.max(T4_OUT_END - T4_OUT_START, 1), 0), 1);
   const img4Reveal = isMobile ? (img4In - img4Out) : img3Reveal;
-
-  // Stance bar fade out
-  const stanceFadeOutPhase = Math.min(Math.max((scrollPx - STANCE_FADE_START) / Math.max(vh * 0.3, 1), 0), 1);
-  const stanceOpacity = 1 - stanceFadeOutPhase;
 
   return (
     <section

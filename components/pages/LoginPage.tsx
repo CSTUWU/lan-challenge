@@ -7,7 +7,6 @@ import { ArrowLeft } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { RegistrationModal } from '@/components/ui/RegistrationModal';
 import { LoginForm } from '@/components/ui/LoginForm';
-import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 import { tournamentService } from '@/service/tournamentService';
 
 export default function LoginPage() {
@@ -16,14 +15,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (tournamentService.verifyAdminPasscode(password) || tournamentService.verifyAdminPasscode(username)) {
       setErrorMessage(null);
       tournamentService.setAdminAuthenticated(true);
-      playGunCockSound();
       router.push('/admin');
     } else {
       setErrorMessage('ACCESS DENIED: INVALID PASSCODE. USE REFEREE PASSCODE TO AUTHENTICATE.');
@@ -35,11 +32,8 @@ export default function LoginPage() {
       <div className="screen-overlay fixed inset-0 z-10 pointer-events-none" />
 
       <Header
-        isAudioEnabled={isAudioEnabled}
-        onToggleAudio={toggleAudio}
         onOpenModal={() => {
           setIsModalOpen(true);
-          playGunCockSound();
         }}
       />
 
@@ -66,7 +60,6 @@ export default function LoginPage() {
       <RegistrationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={playGunCockSound}
       />
     </div>
   );

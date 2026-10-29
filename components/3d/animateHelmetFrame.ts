@@ -59,13 +59,13 @@ export function animateHelmetFrame(
   const p4 = Math.min(Math.max((scrollPx - VH * 6.0) / (VH * 0.8), 0), 1);
   const ease4 = Math.sin(p4 * Math.PI * 0.5);
 
-  // Phase 5: Move Top Right, Spin, Zoom Out
-  const phase5Start = isMobile ? 7.8 : 8.5;
+  // Phase 5: Zoom in as atmospheric background, show only top section (head/top)
+  const phase5Start = isMobile ? 7.6 : 8.2;
   const p5 = Math.min(Math.max((scrollPx - VH * phase5Start) / (VH * 1.0), 0), 1);
   const ease5 = Math.sin(p5 * Math.PI * 0.5);
 
   // -----------------------------------------------------
-  // 1. SCROLL X POSITION — Left -> Center -> Right
+  // 1. SCROLL X POSITION — Left -> Center -> Right -> Center Background
   // -----------------------------------------------------
   // Calculate true screen width in 3D world space
   const camDistForEdge = Math.max(camera.position.z - 1.5, 0.05); // Model is at z=1.5
@@ -98,10 +98,8 @@ export function animateHelmetFrame(
   const targetX3 = THREE.MathUtils.lerp(targetX2, rawRight, ease3); // Center to Right
   const targetX4 = THREE.MathUtils.lerp(targetX3, rawCenter, ease4); // Right back to Center
 
-  // Dynamically push to top right corner on phase 5
-  const posTopRightX = isMobile ? 0.8 : screenEdgeX;
-  const rawTopRightX = posTopRightX - restXTarget;
-  const targetX5 = THREE.MathUtils.lerp(targetX4, rawTopRightX, ease5); // Center to Top Right Corner
+  // Phase 5: Stay perfectly centered in background (rawCenter) instead of going to top-right
+  const targetX5 = THREE.MathUtils.lerp(targetX4, rawCenter, ease5);
   const rawTargetX = targetX5;
 
   // -----------------------------------------------------
@@ -116,9 +114,10 @@ export function animateHelmetFrame(
   // Phase 4: Move UP so it sits comfortably in the middle
   const phase4Y = heroEndY + (isMobile ? 0.4 : 1.0 * scaleRatio);
   const targetY4 = THREE.MathUtils.lerp(targetY3, phase4Y, ease4);
-  // Phase 5: Move to Top corner
-  const topCornerY = heroEndY + (isMobile ? 1.5 : 2.2 * scaleRatio);
-  const targetY5 = THREE.MathUtils.lerp(targetY4, topCornerY, ease5);
+  
+  // Phase 5: Push DOWN so only the upper/top portion of the zoomed helmet is visible at the top/center of screen
+  const zoomedBackgroundY = isMobile ? -2.2 : -3.6 * scaleRatio;
+  const targetY5 = THREE.MathUtils.lerp(targetY4, zoomedBackgroundY, ease5);
   const baseY = targetY5;
   const dipY = 0; // No dipping on scroll
 
@@ -130,15 +129,17 @@ export function animateHelmetFrame(
   const scale1 = heroEndScale - (scaleReduction * ease1); // Scale down when left
   const scale2 = THREE.MathUtils.lerp(scale1, heroEndScale, ease2); // Scale normal when centered
   const scale3 = scale2 - (scaleReduction * ease3); // Scale down when right
-  const zoomOutScale = isMobile ? 0.5 : 0.6 * scaleRatio; // MORE Extra zoom out for phase 4
-  const scale4 = THREE.MathUtils.lerp(scale3, zoomOutScale, ease4); // Zoom out
-  const topCornerScale = isMobile ? 0.25 : 0.3 * scaleRatio; // Very small for top corner
-  const scale5 = THREE.MathUtils.lerp(scale4, topCornerScale, ease5); // Zoom out to corner
+  const midScale = isMobile ? 0.8 : 1.2 * scaleRatio;
+  const scale4 = THREE.MathUtils.lerp(scale3, midScale, ease4);
+  
+  // Phase 5: ZOOM IN significantly to become a giant background helmet motif
+  const zoomedBackgroundScale = isMobile ? 2.4 : 3.8 * scaleRatio;
+  const scale5 = THREE.MathUtils.lerp(scale4, zoomedBackgroundScale, ease5); // Zoom In
   const currentScale = scale5;
   helmetGroup.scale.set(currentScale, currentScale, currentScale);
 
   // -----------------------------------------------------
-  // 4. MODEL ROTATION - Face Right -> Forward -> Left
+  // 4. MODEL ROTATION - Face Right -> Forward -> Left -> Face Forward
   // -----------------------------------------------------
   const baseRestRotation = -0.6; // The default offset added later
   const posRotLeft = Math.PI * 0.35; // Look Right (when on left side)
@@ -155,14 +156,14 @@ export function animateHelmetFrame(
   const rot3 = THREE.MathUtils.lerp(rot2, rawRotRight, ease3); // To right side (looking left)
   const rot4 = THREE.MathUtils.lerp(rot3, rawRotCenter, ease4); // Back to center (looking forward)
 
-  // Phase 5: Do a full 360 degree spin (Math.PI * 2) while moving to the right corner
-  // It should end up facing forward (rawRotCenter) after spinning
-  const spinAmount = Math.PI * 2;
-  const rot5 = THREE.MathUtils.lerp(rot4, rawRotCenter + spinAmount, ease5);
+  // Phase 5: Smoothly face directly forward as a majestic background element
+  const rot5 = THREE.MathUtils.lerp(rot4, rawRotCenter, ease5);
   const visionRot = rot5;
 
-  // Push model back on Z-axis for mobile so it sits in background behind text
-  helmetGroup.position.z = isMobile ? (0.2 - p * 1.8) : 1.5;
+  // Push model slightly further back in Phase 5 so content scrolls cleanly over it
+  const baseZ = isMobile ? (0.2 - p * 1.8) : 1.5;
+  const targetZ5 = isMobile ? -0.8 : 0.6;
+  helmetGroup.position.z = THREE.MathUtils.lerp(baseZ, targetZ5, ease5);
 
   // Intro Animation Logic
   if (elapsedTime > state.introStartTime + 0.6) {

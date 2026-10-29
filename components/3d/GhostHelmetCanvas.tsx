@@ -12,23 +12,20 @@ interface GhostHelmetCanvasProps {
   onProgress: (percent: number, statusText: string) => void;
   onStanceUpdate: (percentage: number) => void;
   onScrollProgressUpdate: (progress: number) => void;
-  onPlayAimSound: () => void;
 }
 
 export function GhostHelmetCanvas({
   onProgress,
   onStanceUpdate,
   onScrollProgressUpdate,
-  onPlayAimSound,
 }: GhostHelmetCanvasProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const soundPlayedRef = useRef(false);
   const [isModelLoaded, setIsModelLoaded] = useState(false);
 
-  const callbacksRef = useRef({ onProgress, onStanceUpdate, onScrollProgressUpdate, onPlayAimSound });
+  const callbacksRef = useRef({ onProgress, onStanceUpdate, onScrollProgressUpdate });
   useEffect(() => {
-    callbacksRef.current = { onProgress, onStanceUpdate, onScrollProgressUpdate, onPlayAimSound };
+    callbacksRef.current = { onProgress, onStanceUpdate, onScrollProgressUpdate };
   });
 
   useEffect(() => {
@@ -118,13 +115,6 @@ export function GhostHelmetCanvas({
           lastPercentage = percentage;
           callbacksRef.current.onStanceUpdate(percentage);
         }
-      }
-
-      if (progress > 0.65 && !soundPlayedRef.current) {
-        callbacksRef.current.onPlayAimSound();
-        soundPlayedRef.current = true;
-      } else if (progress < 0.3) {
-        soundPlayedRef.current = false;
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });

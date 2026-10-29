@@ -10,7 +10,6 @@ const GhostHelmetCanvas = dynamic(
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { Header } from '@/components/ui/Header';
 import { HeroSection } from '@/components/ui/HeroSection';
-import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 
 const MapGallerySection = dynamic(
   () => import('@/components/ui/MapGallerySection').then((mod) => mod.MapGallerySection)
@@ -35,8 +34,9 @@ const RegistrationModal = dynamic(
 
 export default function HomePage() {
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingStatus, setLoadingStatus] = useState('STREAMING DATA...');
-  const [isLoadingComplete, setIsLoadingComplete] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState('INITIALIZING TACTICAL ARENA');
+  const [isSceneReady, setIsSceneReady] = useState(false);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
   const [stancePercentage, setStancePercentage] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,20 +48,24 @@ export default function HomePage() {
     window.scrollTo(0, 0);
   }, []);
 
-  const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
+  useEffect(() => {
+    const timer = setTimeout(() => setMinTimeElapsed(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const isLoadingComplete = isSceneReady && minTimeElapsed;
 
   const handleLoadingProgress = useCallback((percent: number, statusText: string) => {
     setLoadingProgress(percent);
     setLoadingStatus(statusText);
     if (percent >= 100) {
-      setTimeout(() => setIsLoadingComplete(true), 600);
+      setIsSceneReady(true);
     }
   }, []);
 
   const handleOpenModal = useCallback(() => {
     setIsModalOpen(true);
-    playGunCockSound();
-  }, [playGunCockSound]);
+  }, []);
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
@@ -79,14 +83,11 @@ export default function HomePage() {
         onProgress={handleLoadingProgress}
         onStanceUpdate={setStancePercentage}
         onScrollProgressUpdate={setScrollProgress}
-        onPlayAimSound={playGunCockSound}
       />
 
       <div className="screen-overlay fixed inset-0 z-10 pointer-events-none" />
 
       <Header
-        isAudioEnabled={isAudioEnabled}
-        onToggleAudio={toggleAudio}
         onOpenModal={handleOpenModal}
       />
 
@@ -101,7 +102,6 @@ export default function HomePage() {
       <RegistrationModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onSuccess={playGunCockSound}
       />
     </div>
   );

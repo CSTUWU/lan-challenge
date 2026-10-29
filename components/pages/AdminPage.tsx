@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic';
 import { Trophy, Users, ArrowLeft, Radio, LogOut } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { AdminAuthGate } from '@/components/ui/AdminAuthGate';
-import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 import { LeaderboardTeam, LiveMatchData, RegisteredSquad, TeamGroup, TeamStatus } from '@/types/tournament';
 import { tournamentService } from '@/service/tournamentService';
 
@@ -40,7 +39,6 @@ export default function AdminPage() {
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
 
   const [activeTab, setActiveTab] = useState<'live' | 'leaderboard' | 'registrations'>('live');
   const [teams, setTeams] = useState<LeaderboardTeam[]>(() => tournamentService.getLeaderboard());
@@ -100,7 +98,6 @@ export default function AdminPage() {
       tournamentService.setAdminAuthenticated(true);
       setIsAuthenticated(true);
       setPinError(false);
-      playGunCockSound();
     } else {
       setPinError(true);
     }
@@ -162,7 +159,6 @@ export default function AdminPage() {
       points: 0,
       status: 'CONTENDER',
     });
-    playGunCockSound();
   };
 
   const handleEditClick = (team: LeaderboardTeam) => {
@@ -195,11 +191,8 @@ export default function AdminPage() {
       <div className="screen-overlay fixed inset-0 z-10 pointer-events-none" />
 
       <Header
-        isAudioEnabled={isAudioEnabled}
-        onToggleAudio={toggleAudio}
         onOpenModal={() => {
           setIsModalOpen(true);
-          playGunCockSound();
         }}
       />
 
@@ -326,7 +319,6 @@ export default function AdminPage() {
       <RegistrationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={playGunCockSound}
       />
     </div>
   );

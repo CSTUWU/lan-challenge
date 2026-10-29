@@ -7,23 +7,18 @@ import { RegistrationModal } from '@/components/ui/RegistrationModal';
 import { MapPoolSection } from '@/components/ui/MapPoolSection';
 import { RulesSectionGrid } from '@/components/ui/RulesSectionGrid';
 import { useState } from 'react';
-import { useTacticalAudio } from '@/hooks/useTacticalAudio';
 import { TOURNAMENT_MAPS } from '@/lib/constants';
 
 export default function RulesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isAudioEnabled, toggleAudio, playGunCockSound } = useTacticalAudio();
 
   return (
     <div className="relative min-h-screen bg-[#050709] text-white">
       <div className="screen-overlay fixed inset-0 z-10 pointer-events-none" />
 
       <Header
-        isAudioEnabled={isAudioEnabled}
-        onToggleAudio={toggleAudio}
         onOpenModal={() => {
           setIsModalOpen(true);
-          playGunCockSound();
         }}
       />
 
@@ -63,7 +58,6 @@ export default function RulesPage() {
           <button
             onClick={() => {
               setIsModalOpen(true);
-              playGunCockSound();
             }}
             className="px-10 py-4 bg-[#00ff66] hover:bg-emerald-400 text-black font-display font-black text-sm tracking-widest uppercase rounded shadow-[0_0_24px_rgba(0,255,102,0.6)] transition-all hover:scale-105 active:scale-95"
           >
@@ -75,7 +69,6 @@ export default function RulesPage() {
       <RegistrationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={playGunCockSound}
       />
     </div>
   );
