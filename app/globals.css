@@ -54,28 +54,6 @@
   position: relative;
 }
 
-.hud-border::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  width: 8px;
-  height: 8px;
-  border-top: 2px solid #00ff66;
-  border-left: 2px solid #00ff66;
-}
-
-.hud-border::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 8px;
-  height: 8px;
-  border-bottom: 2px solid #00ff66;
-  border-right: 2px solid #00ff66;
-}
-
 .glow-text-green,
 .glow-text-orange {
   text-shadow: 0 0 12px rgba(0, 255, 102, 0.75), 0 0 24px rgba(0, 255, 102, 0.4);
