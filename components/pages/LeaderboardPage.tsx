@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import { ArrowLeft, Maximize2, Monitor } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { LeaderboardTable } from '@/components/ui/LeaderboardTable';
+import { TournamentPlayoffBracket } from '@/components/ui/TournamentPlayoffBracket';
 import { LeaderboardTeam, LiveMatchData } from '@/types/tournament';
 import { tournamentService } from '@/service/tournamentService';
 
@@ -135,6 +136,9 @@ export default function LeaderboardPage() {
           selectedGroup={selectedGroup}
           onSelectGroup={setSelectedGroup}
         />
+
+        {/* Tournament Playoff Elimination Bracket Map */}
+        <TournamentPlayoffBracket />
 
 
       </main>
