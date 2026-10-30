@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, Zap } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Header } from '@/components/ui/Header';
 import { RegistrationModal } from '@/components/ui/RegistrationModal';
 import { MapPoolSection } from '@/components/ui/MapPoolSection';
@@ -32,10 +32,6 @@ export default function RulesPage() {
         </Link>
 
         <div className="hud-border bg-[#0b0e14]/90 p-8 rounded-xl border border-[#00ff66]/40 mb-12 glow-box-green relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
-            <Zap className="w-48 h-48 text-[#00ff66]" />
-          </div>
-
           <div className="flex items-center space-x-2 text-[#00ff66] font-mono text-xs tracking-widest uppercase mb-2">
             <span className="w-2.5 h-2.5 bg-[#00ff66] shadow-[0_0_8px_#00ff66]"></span>
             <span>OFFICIAL TOURNAMENT DIRECTIVE</span>
